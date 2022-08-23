@@ -1,6 +1,12 @@
 
-TEST_MODE_COLOR                 = '#c3ffcc';
-PROD_MODE_COLOR                 = '#ffcec3';
+
+var fs      = require('fs');
+let data = fs.readFileSync('data.json');
+let settings = JSON.parse(data);
+
+
+TEST_MODE_COLOR                 = settings.testModeColor;
+PROD_MODE_COLOR                 = settings.prodModeColor;
 
 
 
@@ -206,10 +212,9 @@ async function selectFile() {
     editor.innerHTML = '';
 
 
-    var fs      = require('fs');
     // let file = await dialogFileSelector();
     // let file = "../script_lib.js";
-    let file = "./sortie.js";
+    let file = settings.path;
     fs.readFile(file, "utf8",function(error, data){
         startPosition = data.indexOf("class ScriptLibFunctions {");
         Compile(data,"ScriptLibFunctions");
@@ -220,7 +225,7 @@ function popupAutoClose(time) {
     let timerInterval
     Swal.fire({
     title: 'Saving Script Lib!',
-    html: 'I will close in <b></b> milliseconds.',
+    html: 'Remaining time <b></b> milliseconds.',
     timer: time,
     timerProgressBar: true,
     didOpen: () => {
