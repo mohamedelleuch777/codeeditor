@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScriptLib Code Editor!</title>
+	<script type="text/javascript" src="lib/sweetalert2.all.min.js"></script>
+	<script type="text/javascript" src="lib/jquery.js"></script>
+	<script type="text/javascript" src="lib/codemirror.js" ></script>
+	<script defer type="text/javascript" src="script.js" ></script>
+	<style>
+		body {
+			margin: 0;
+		}
+		
+		#main-container {
+			position: relative;
+			width: 100vw;
+			height: 100vh;
+		}
+		
+		#editor {
+			position: absolute;
+			left: 350px;
+			width: calc(100% - 350px);
+			height: 100%;
+			display: flex;
+		}
+		
+		.ͼ1.cm-editor, .ͼ15.cm-editor {
+			width: 100%;
+		}
+		
+		#fiction-list {
+			position: absolute;
+			margin: 0;
+			padding: 10px;
+			width: 330px;
+			height: calc(100% - 20px);
+			flex: 1;
+			overflow-x: hidden;
+    		overflow-y: auto;
+		}
+		.fiction-item {
+			height: 30px;
+			line-height: 30px;
+			padding-left: 10px;
+			cursor: pointer;
+			border: solid 1px #ccc;
+		}
+		li.fiction-item.active {
+			background-color: blueviolet;
+			color: #fff;
+			font-weight: bold;
+		}
+	</style>
+	<script type="text/javascript">
+      
+        //sourceCode = atob(`###_ENCRYPTED_BASE64_DATA_###`);
+        let startPosition;// = data.indexOf("class ScriptLibFunctions {");
+		function onEditorInput(e) {
+			// debugger
+			if(window.methodsObject) {
+			window.openedMethodId && (methodsObject.methodList[openedMethodId].body = view.state.doc.toString());
+			}
+			window.onEditorInput = onEditorInput;
+		}
+	</script>
+</head>
+<body>
+	<div id="main-container">
+		<ul id="fiction-list">
+		</ul>
+		<div id="editor"></div>
+	</div>
+<script>
+	'use strict';
+    const {
+		basicSetup,
+		EditorView
+	} = CM["codemirror"];
+	const {
+		javascript,
+		javascriptLanguage
+	} = CM["@codemirror/lang-javascript"];
+	const {
+		completeFromList
+	} = CM["@codemirror/autocomplete"];
+	let jsCompletion = completeFromList(Object.getOwnPropertyNames(window).map(p => {
+		return {
+			label: p,
+			type: /^[A-Z]/.test(p) ? "class" : typeof window[p] == "function" ? "function" : "variable"
+		};
+	}));
+	window.view = new EditorView({
+		doc: window.sourceCode || '',
+		extensions: [
+		EditorView.updateListener.of(onEditorInput),
+		basicSetup, javascript(), javascriptLanguage.data.of({
+			autocomplete: jsCompletion
+		})],
+		parent: document.querySelector("#editor")
+	});
+	
+	
+	
+	
+	</script>
+</body>
+</html>
+
