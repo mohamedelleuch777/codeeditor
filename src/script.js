@@ -103,7 +103,7 @@ function extractClassMethod(classCode,match) {
 function addFictionList(methObj) {
     let ul = document.getElementById("fiction-list");
     let ulHtml = ul.innerHTML;
-    ulHtml += `\n\t\t<li class="fiction-item ${methObj.event?"event":""}" fiction-id=${methObj.id} onclick="selectFictionFromList(event)">${methObj.name}</li>`;
+    ulHtml += `\n\t\t<li class="fiction-item ${methObj.event?"event":""}" fiction-id=${methObj.id} onclick="handleItemSelection(event)">${methObj.name}</li>`;
     ul.innerHTML = ulHtml;
 }
 
@@ -160,6 +160,28 @@ function loadCodeInEditor(editor, code) {
     });
 }
 
+const handleItemSelection = (evt) => {
+    if(evt.clientX<=30) {
+        clickedOnBefore(evt);
+    } else {
+        selectFictionFromList(evt);
+    }
+}
+
+const clickedOnBefore = (evt) => {
+    let msg = "This fiction doesn't have events handling", type = "error";
+    if(methodsObject.methodList[evt.target.getAttribute("fiction-id")].event) {
+        msg = "This fiction is handling events";
+        type = "success";
+    }
+    Swal.fire({
+        title: 'Notification!',
+        text: msg,
+        icon: type,
+        confirmButtonText: 'OK'
+    })
+}
+
 const selectFictionFromList = (evt) => {
     let items = document.getElementsByClassName('fiction-item');
     for(let i=0; i<items.length; i++) {
@@ -200,7 +222,7 @@ function createOutputFile() {
 
     filePart3 += "$(window).ready(() => {\n\r";
     methodsObject.methodList.forEach(element => {
-        element.name !== 'constructor' && (filePart3 += "scriptLibFunctions." + element.name + "()\n\r");
+        element.name !== 'constructor' && (filePart3 += settings.class + "." + element.name + "()\n\r");
     });    filePart3 += `
 })
 `;
@@ -243,8 +265,8 @@ async function selectFile() {
     // let file = "../script_lib.js";
     let file = settings.path;
     fs.readFile(file, "utf8",function(error, data){
-        startPosition = data.indexOf("class ScriptLibFunctions {");
-        Compile(data,"ScriptLibFunctions");
+        startPosition = data.indexOf("class " + settings.class + " {");
+        Compile(data,settings.class);
     });
 }
 
@@ -320,12 +342,42 @@ function createMethod() {
 }
 
 function removeMethod() {
-    Swal.fire({
-        title: 'Error!',
-        text: 'Removing fictions is not available yet',
-        icon: 'error',
-        confirmButtonText: 'OK'
-    })
+    let fictionList = document.querySelectorAll("#fiction-list li");
+    let res = -1;
+    fictionList.forEach( (it,i) => {
+        let classList = it.classList;
+        if([...classList].includes('active')) {
+            res = i;
+        }
+    });
+    if(res===-1) {
+        Swal.fire({
+            title: 'Error!',
+            text: 'Please select an item to delete',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        })
+    } else {
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          icon: 'error',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            methodsObject.methodList.splice(res,1);
+            fictionList[res].outerHTML = '';
+            Swal.fire(
+              'Deleted!',
+              'The fiction has been deleted.',
+              'success'
+            )
+          }
+        })
+    }
 }
 
 function renameMethod() {
@@ -387,12 +439,11 @@ function setTestMode() {
             showCancelButton: true,
             confirmButtonText: 'Turn ON',
             denyButtonText: 'Turn OFF',
-        /*    customClass: {
-              actions: 'my-actions',
-              cancelButton: 'order-1 right-gap',
-              confirmButton: 'order-2',
-              denyButton: 'order-3',
-            } */
+            customClass: {
+              cancelButton: '',
+              confirmButton: 'success',
+              denyButton: 'error',
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 let newTestMode = {
