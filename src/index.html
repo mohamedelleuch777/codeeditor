@@ -44,11 +44,29 @@
     		overflow-y: auto;
 		}
 		.fiction-item {
+			position: relative;
 			height: 30px;
 			line-height: 30px;
-			padding-left: 10px;
+			padding-left: 30px;
 			cursor: pointer;
 			border: solid 1px #ccc;
+		}
+		li.fiction-item.event:before {
+		    content: 'e';
+		    position: absolute;
+		    left: 13px;
+		    border: solid 1px #df0000;
+		    width: 15px;
+		    height: 15px;
+		    top: 50%;
+		    transform: translate(-50%, -50%);
+		    border-radius: 50%;
+		    line-height: 11px;
+		    text-align: center;
+		    font-weight: bold;
+		    font-size: 20px;
+		    color: #fff;
+		    background-color: #df0000;
 		}
 		li.fiction-item.active {
 			background-color: blueviolet;

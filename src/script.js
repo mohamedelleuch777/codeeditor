@@ -76,6 +76,8 @@ function extractClassMethod(classCode,match) {
     let endDeclarationPosition = classCode.indexOf("{",startPosition);
     let methodName = classCode.substring(startPosition,endDeclarationPosition);
     let isAsync = methodName.includes("async");
+    let event = methodName.split('(')[1].split(')')[0] ;
+    event = event !== '' ? event : null
     methodName = methodName.split('(')[0].replaceAll('async','').replaceAll('\t','').replaceAll('\n','').replaceAll('\r','').replaceAll(' ','');
     let endPosition = getMethodBody(classCode,startPosition);
     // console.log("++++++++++",endPosition);
@@ -85,6 +87,7 @@ function extractClassMethod(classCode,match) {
     tst && (methodBody = methodBody.replace(tst.value,''));
     let method = {
         id: methodId,
+        event: event,
         startPosition: startPosition,
         endPosition: endPosition,
         name: methodName,
@@ -100,7 +103,7 @@ function extractClassMethod(classCode,match) {
 function addFictionList(methObj) {
     let ul = document.getElementById("fiction-list");
     let ulHtml = ul.innerHTML;
-    ulHtml += `\n\t\t<li class="fiction-item" fiction-id=${methObj.id} onclick="selectFictionFromList(event)">${methObj.name}</li>`;
+    ulHtml += `\n\t\t<li class="fiction-item ${methObj.event?"event":""}" fiction-id=${methObj.id} onclick="selectFictionFromList(event)">${methObj.name}</li>`;
     ul.innerHTML = ulHtml;
 }
 
@@ -184,7 +187,7 @@ function createOutputFile() {
     filePart3 = filePart3.substring(0,filePart3.lastIndexOf("$(window).ready(() => {"));
     methodsObject.methodList.forEach(element => {
         filePart2 += element.async ? "async " : "" ;
-        filePart2 += element.name + "() {";
+        filePart2 += element.name + "(" + (element.event?element.event:"") + ") {";
         filePart2 += element.testMode ? element.testMode.value :  "";
         if(element.body[0]!=='\n' || element.body[0]!=='\r') filePart2+='\n';
         filePart2 += element.body;
