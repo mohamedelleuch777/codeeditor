@@ -22,14 +22,38 @@ let previousMethodStartingPosition = 0;
 let methodId = 0;
 
 function getMethodBody(classCode, startPos) {
+    let notInsideComment = true;
+    let notInsideDoubleQuotes = true;
+    let notInsideSingleQuotes = true;
+    let notInsideApostrophe = true;
+    let previousChar = '';
     let openedCurleyBraceCount = 0;
     let firstCurlyBracePos = classCode.indexOf('{',startPos);
     for(let i=startPos; i<classCode.length; i++) {
-        if(classCode[i]==='{') openedCurleyBraceCount++;
-        if(classCode[i]==='}') openedCurleyBraceCount--;
-        if(openedCurleyBraceCount===0 && i>firstCurlyBracePos) {
-            return i;
+        if(classCode[i]==='/' && previousChar==='/' && notInsideDoubleQuotes && notInsideSingleQuotes && notInsideApostrophe) {
+            notInsideComment = false;
         }
+        if(classCode[i]==='"' && previousChar!=='\\' && notInsideComment && notInsideSingleQuotes && notInsideApostrophe) {
+            notInsideDoubleQuotes = !notInsideDoubleQuotes;
+        }
+        if(classCode[i]==="'" && previousChar!=='\\' && notInsideComment && notInsideDoubleQuotes && notInsideApostrophe) {
+            notInsideSingleQuotes = !notInsideSingleQuotes;
+        }
+        if(classCode[i]==="`" && previousChar!=='\\' && notInsideComment && notInsideDoubleQuotes && notInsideSingleQuotes) {
+            notInsideApostrophe = !notInsideApostrophe;
+        }
+        if(notInsideComment) {
+            if(classCode[i]==='{') openedCurleyBraceCount++;
+            if(classCode[i]==='}') openedCurleyBraceCount--;
+            if(openedCurleyBraceCount===0 && i>firstCurlyBracePos) {
+                return i;
+            }
+        } else {
+            if(classCode[i]==='\n' && !notInsideComment) {
+                notInsideComment = true;
+            }
+        }
+        previousChar = classCode[i];
     }
 }
 
@@ -95,7 +119,7 @@ function Compile(sourceCode,className) {
     window.methodsObject.startPosition = startPosition;
     window.methodsObject.endPosition = endPosition;
     let classCode = sourceCode.substring(startPosition,endPosition+4);
-    var re = /^\t*\b(?!function\b).*?\b\s*\w*\s*\(\)\s*\{/gm
+    var re = /^\t*\b(?!function\b).*?\b\s*\w*\s*\(\w*\)\s*\{/gm
     methodList = [];
     while ((match = re.exec(classCode)) != null) {
         let tempMeth = extractClassMethod(classCode,match);
@@ -178,7 +202,7 @@ function createOutputFile() {
 })
 `;
     let outFile = filePart1 + filePart2 + filePart3;
-    fs.writeFile("sortie.js", outFile, "utf8", function(err) {
+    fs.writeFile(settings.path, outFile, "utf8", function(err) {
         const min = 300, max = 750;
         let timeout = Math.random() * (max - min) + min;
         popupAutoClose();
