@@ -84,7 +84,8 @@ const template = [
         { label: "Create", click: (e) => handleMenuActions(e) },
         { label: "Remove", click: (e) => handleMenuActions(e) },
         { label: "Rename", click: (e) => handleMenuActions(e) },
-        { label: "Set ON/OFF Test Mode", click: (e) => handleMenuActions(e) }
+        { label: "Set ON/OFF Test Mode", click: (e) => handleMenuActions(e) },
+        { label: "Generate Test Link", click: (e) => handleMenuActions(e) }
       ]
     },
     {
@@ -164,6 +165,10 @@ function handleMenuActions(evt) {
       case "Set ON/OFF Test Mode":
           // window.createOutputFile(window.brutFile)
           mainWindow.webContents.send('set_test_mode');
+      break;
+      case "Generate Test Link":
+          // window.createOutputFile(window.brutFile)
+          mainWindow.webContents.send('generate_test_ink');
       break;
   }
 }

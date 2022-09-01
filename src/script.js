@@ -122,7 +122,7 @@ function Compile(sourceCode,className) {
     window.methodsObject.startPosition = startPosition;
     window.methodsObject.endPosition = endPosition;
     let classCode = sourceCode.substring(startPosition,endPosition+4);
-    var re = /^\t*\b(?!function\b).*?\b\s*\w*\s*\(\w*\)\s*\{/gm
+    var re = /[^\t*]\b(?!function\b).*?\b\s*\w*\s*\(\w*\)\s*\{/gm
     methodList = [];
     while ((match = re.exec(classCode)) != null) {
         let tempMeth = extractClassMethod(classCode,match);
@@ -222,7 +222,8 @@ function createOutputFile() {
 
     filePart3 += "$(window).ready(() => {\n\r";
     methodsObject.methodList.forEach(element => {
-        element.name !== 'constructor' && (filePart3 += settings.class + "." + element.name + "()\n\r");
+        let objName = settings.class.charAt(0).toLowerCase() + settings.class.slice(1);
+        element.name !== 'constructor' && (filePart3 += objName + "." + element.name + "()\n\r");
     });    filePart3 += `
 })
 `;
@@ -451,12 +452,50 @@ function setTestMode() {
                     value: `if (!scriptLib.runThisFunctionOnlyInTestMode("${newUUID}")) return;`
                 }
                 methodsObject.methodList[res].testMode = newTestMode;
+                setEditorBackgroundColor(TEST_MODE_COLOR);
                 Swal.fire('You are under test mode', '', 'success')
             } else if (result.isDenied) {
                 methodsObject.methodList[res].testMode = null;
+                setEditorBackgroundColor(PROD_MODE_COLOR)
                 Swal.fire('You are now on PRODUCTION MODE', '', 'warning')
             }
         })
+    }
+}
+
+function generateTestLink () {
+    let fictionList = document.querySelectorAll("#fiction-list li");
+    let res = -1;
+    fictionList.forEach( (it,i) => {
+        let classList = it.classList;
+        if([...classList].includes('active')) {
+            res = i;
+        }
+    });
+    if(res===-1) {
+        Swal.fire({
+            title: 'Error!',
+            text: 'Please select an item to generate its test link',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        })
+    } else {
+        if(methodsObject.methodList[res].testMode) {
+            Swal.fire({
+                title: 'Test Link Generated!',
+                text: "https://www.mediamarkt.com.tr/?SCRIPT_LIB_TEST_UUID=" + methodsObject.methodList[res].testMode.uuid,
+                icon: 'success',
+                confirmButtonText: 'OK'
+            })
+        } else {
+            Swal.fire({
+                title: 'Error!',
+                text: 'This fiction\'s test mode is off. You need to turn it on first',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            })
+        }
+        
     }
 }
 
@@ -475,5 +514,5 @@ ipcRenderer.on('create', (evt, msg) => createMethod());
 ipcRenderer.on('remove', (evt, msg) => removeMethod());
 ipcRenderer.on('rename', (evt, msg) => renameMethod());
 ipcRenderer.on('set_test_mode', (evt, msg) => setTestMode());
-
+ipcRenderer.on('generate_test_ink', (evt, msg) => generateTestLink());
 
