@@ -506,6 +506,31 @@ function generateUuidV4() {
     );
 }
 
+function ShellExecute(cmd) {
+    return new Promise((resolve) => {
+        exec(cmd, (error, stdout, stderr) => {
+        if (error) {
+            console.log(`error: ${error.message}`);
+            resolve(false);
+            return;
+        }
+        if (stderr) {
+            console.log(`stderr: ${stderr}`);
+            resolve(false);
+            return;
+        }
+        if (stdout !== "") {
+            console.log(`stdout: ${stdout}`);
+        }
+        resolve(true);
+        });
+    });
+}
+
+function GIT_Add() {}
+function GIT_Commit() {}
+function GIT_Push() {}
+
 
 const { ipcRenderer } = require('electron');
 
