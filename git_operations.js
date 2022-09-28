@@ -23,7 +23,7 @@ function ShellExecute(cmd) {
 
 function GIT_Add() {}
 function GIT_Commit() {}
-function GIT_Push() {}
+function GIT_Push() {} 
 
 async function main() {
     await ShellExecute(`git status`);
