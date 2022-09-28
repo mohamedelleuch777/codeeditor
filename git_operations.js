@@ -29,6 +29,7 @@ async function main() {
     await ShellExecute(`git status`);
     await ShellExecute(`git add .`);
     await ShellExecute(`git commit -m"git operations v1"`);
+    await ShellExecute(`git push origin master`);
 }
 
 
