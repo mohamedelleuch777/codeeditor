@@ -43,6 +43,7 @@
     }
   },
   "dependencies": {
+    "@octokit/rest": "^19.0.4",
     "electron-main-window": "^1.0.4",
     "electron-prebuilt-compile": "^8.2.0",
     "electron-squirrel-startup": "^1.0.0"
