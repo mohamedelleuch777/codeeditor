@@ -26,6 +26,7 @@ function GIT_Commit() {}
 function GIT_Push() {} // hi there
 
 async function main() {
+    await ShellExecute(`git pull origin master`);
     await ShellExecute(`git status`);
     await ShellExecute(`git add .`);
     await ShellExecute(`git commit -m"git operations v1"`);
