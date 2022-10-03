@@ -4,7 +4,7 @@ function ShellExecute(cmd) {
     return new Promise((resolve) => {
         exec(cmd, (error, stdout, stderr) => {
         if (error) {
-            console.log(`O93OD_3ASBA_____: ${error.message}`);
+            console.log(`O93OD_FAM_____: ${error.message}`);
             resolve(false);
             return;
         }
