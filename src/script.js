@@ -224,10 +224,15 @@ function createOutputFile() {
     filePart3 += "$(window).ready(() => {\n\r";
     methodsObject.methodList.forEach(element => {
         let objName = settings.class.charAt(0).toLowerCase() + settings.class.slice(1);
-        element.name !== 'constructor' && (filePart3 += objName + "." + element.name + "()\n\r");
+        element.name !== 'constructor' && (filePart3 +=  objName + "." + element.name + "()\n\r");
     });    filePart3 += `
 })
+if(window.localStorage.debug==='true') {
+    console.warn("SCRIPT LIB END EXECUTION TIME: ", new Date().getTime());
+    console.warn("SCRIPT LIB TOOK SYNCHRONOUSLY: ", new Date().getTime(), "MILLISECONDS");
+}
 `;
+    filePart1 = "\nif(window.localStorage.debug==='true')console.warn("SCRIPT LIB START TIME: ", new Date().getTime());\n"+ filePart1
     let outFile = filePart1 + filePart2 + filePart3;
     fs.writeFile(settings.path, outFile, "utf8", function(err) {
         const min = 300, max = 750;
