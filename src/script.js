@@ -232,7 +232,7 @@ if(window.localStorage.debug==='true') {
     console.warn("SCRIPT LIB TOOK SYNCHRONOUSLY: ", new Date().getTime(), "MILLISECONDS");
 }
 `;
-    filePart1 = "\nif(window.localStorage.debug==='true')console.warn("SCRIPT LIB START TIME: ", new Date().getTime());\n"+ filePart1
+    filePart1 = "\nif(window.localStorage.debug==='true')console.warn(\"SCRIPT LIB START TIME: \", new Date().getTime());\n"+ filePart1
     let outFile = filePart1 + filePart2 + filePart3;
     fs.writeFile(settings.path, outFile, "utf8", function(err) {
         const min = 300, max = 750;
