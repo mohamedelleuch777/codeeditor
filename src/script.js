@@ -201,6 +201,33 @@ const selectFictionFromList = (evt) => {
 };
 
 
+function removeExtraWhiteSpaceFromFunctionBody(source, whiteSpaceChar) {
+	debugger
+	let res = "", started = false;
+	for (let i=0; i<source.length; i++) {
+		let c = source[i];
+		if((!whiteSpaceChar.includes(c)) || started) {
+			res += c;
+			if(!started) {
+				started = true;
+			}
+		}
+	}
+	let res_opposite = "";
+    	started = false;
+	for (let i=res.length-1; i>=0; i--) {
+		let c = res[i];
+		if((!whiteSpaceChar.includes(c)) || started) {
+			res_opposite = c + res_opposite;
+			if(!started) {
+				started = true;
+			}
+		}
+	}
+	return  res_opposite;
+}
+        
+
 function createOutputFile() {
     var fs      = require('fs');
     let mainSource = window.brutFile;
@@ -212,6 +239,7 @@ function createOutputFile() {
         filePart2 += element.async ? "async " : "" ;
         filePart2 += element.name + "(" + (element.event?element.event:"") + ") {";
         filePart2 += element.testMode ? element.testMode.value :  "";
+	element.body = removeExtraWhiteSpaceFromFunctionBody(element.body, ['\n', '\r']);
         if(element.body[0]!=='\n' || element.body[0]!=='\r') filePart2+='\n';
         filePart2 += element.body;
         if(element.body[element.body.length-1]!=='\n' || element.body[element.body.length-1]!=='\r') filePart2+='\n';
@@ -232,7 +260,7 @@ if(window.localStorage.debug==='true') {
     console.warn("SCRIPT LIB TOOK SYNCHRONOUSLY: ", new Date().getTime(), "MILLISECONDS");
 }
 `;
-    filePart1 = "\nif(window.localStorage.debug==='true')console.warn(\"SCRIPT LIB START TIME: \", new Date().getTime());\n"+ filePart1
+    //filePart1 = "\nif(window.localStorage.debug==='true')console.warn(\"SCRIPT LIB START TIME: \", new Date().getTime());\n"+ filePart1
     let outFile = filePart1 + filePart2 + filePart3;
     fs.writeFile(settings.path, outFile, "utf8", function(err) {
         const min = 300, max = 750;
