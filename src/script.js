@@ -14,6 +14,7 @@ PROD_MODE_COLOR                 = settings.prodModeColor;
 
 
 function setEditorBackgroundColor(color) {
+    return; // cancel editor coloring
     document.querySelector('#editor .cm-scroller .cm-content').style.backgroundColor=color;
 }
 
@@ -104,7 +105,7 @@ function extractClassMethod(classCode,match) {
 function addFictionList(methObj) {
     let ul = document.getElementById("fiction-list");
     let ulHtml = ul.innerHTML;
-    ulHtml += `\n\t\t<li class="fiction-item ${methObj.event?"event":""}" fiction-id=${methObj.id} onclick="handleItemSelection(event)">${methObj.name}</li>`;
+    ulHtml += `\n\t\t<li class="fiction-item ${methObj.event?"event":""} ${methObj.testMode?"test":""}" fiction-id=${methObj.id} onclick="handleItemSelection(event)">${methObj.name}</li>`;
     ul.innerHTML = ulHtml;
 }
 
