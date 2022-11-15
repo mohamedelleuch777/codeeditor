@@ -129,8 +129,15 @@
 	'use strict';
     const {
 		basicSetup,
-		EditorView
+		/* EditorView */
 	} = CM["codemirror"];
+    const {
+		EditorView,
+		keymap
+	} = CM["@codemirror/view"];
+    const {
+		indentWithTab
+	} = CM["@codemirror/commands"];
 	const {
 		javascript,
 		javascriptLanguage
@@ -147,10 +154,14 @@
 	window.view = new EditorView({
 		doc: window.sourceCode || '',
 		extensions: [
-		EditorView.updateListener.of(onEditorInput),
-		basicSetup, javascript(), javascriptLanguage.data.of({
-			autocomplete: jsCompletion
-		})],
+			EditorView.updateListener.of(onEditorInput),
+			basicSetup, 
+			javascript(), 
+			javascriptLanguage.data.of({
+				autocomplete: jsCompletion
+			}),
+			keymap.of([indentWithTab])
+		],
 		parent: document.querySelector("#editor")
 	});
 	
