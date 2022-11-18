@@ -106,5 +106,6 @@ function Log(log){
 
 
   module.exports = {
-    serverGetFunc
+    serverGetFunc,
+    Log
   };

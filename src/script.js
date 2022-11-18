@@ -3,7 +3,7 @@
 var fs      = require('fs');
 let data = fs.readFileSync('data.json');
 let settings = JSON.parse(data);
-const { serverGetFunc } = require('../server');
+const { serverGetFunc, Log } = require('../server');
 
 
 TEST_MODE_COLOR                 = settings.testModeColor;
@@ -277,7 +277,7 @@ if(window.localStorage.debug==='true') {
                     confirmButtonText: 'OK'
                 })
             } else {
-                
+                Log("SAVED: "+settings.path);
                 Swal.fire({
                     title: 'Info!',
                     text: 'The Script Lib has been Saved',
@@ -304,6 +304,7 @@ async function selectFile() {
     fs.readFile(file, "utf8",function(error, data){
         startPosition = data.indexOf("class " + settings.class + " {");
         Compile(data,settings.class);
+        Log("OPEN: "+file);
     });
 }
 
@@ -544,6 +545,8 @@ function startDevServer() {
     app.listen(port, "", function(err) {
         try {
             console.log("... port %d in %s mode", port, app.settings.env);
+            Log("Server is running on local machine on port: "+port);
+            document.getElementById("logList").style.backgroundColor = "#fff"
         } catch (err) {
             console.log("error server");
         }
