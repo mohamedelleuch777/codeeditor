@@ -3,6 +3,7 @@
 var fs      = require('fs');
 let data = fs.readFileSync('data.json');
 let settings = JSON.parse(data);
+const { serverGetFunc } = require('../server');
 
 
 TEST_MODE_COLOR                 = settings.testModeColor;
@@ -534,6 +535,21 @@ function generateTestLink () {
     }
 }
 
+
+    const express = require('express');
+    const port = 6695;
+    const app = express();
+    app.get("*", serverGetFunc );
+function startDevServer() {
+    app.listen(port, "", function(err) {
+        try {
+            console.log("... port %d in %s mode", port, app.settings.env);
+        } catch (err) {
+            console.log("error server");
+        }
+    });
+}
+
 function generateUuidV4() {
     return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
         (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
@@ -574,5 +590,6 @@ ipcRenderer.on('create', (evt, msg) => createMethod());
 ipcRenderer.on('remove', (evt, msg) => removeMethod());
 ipcRenderer.on('rename', (evt, msg) => renameMethod());
 ipcRenderer.on('set_test_mode', (evt, msg) => setTestMode());
-ipcRenderer.on('generate_test_ink', (evt, msg) => generateTestLink());
+ipcRenderer.on('generate_test_link', (evt, msg) => generateTestLink());
+ipcRenderer.on('start_dev_server', (evt, msg) => startDevServer());
 

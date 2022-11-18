@@ -1,23 +1,23 @@
 // import express from 'express';
-const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const sl_path = require('./data.json');
 
-const app = express();
 
-const port = 6695;
 
 const sl_directory = path.dirname(sl_path.path);
 
-app.listen(port, "", function() {
+/* app.listen(port, "", function() {
   console.log("... port %d in %s mode", port, app.settings.env);
-});
+}); */
 
 const directoryList = fs.readdirSync(sl_directory)
 var filePath = "";
-app.get("*", async (req, res) => {
+window.log = [];
+const serverGetFunc = async (req, res) => {
     url = req.url;
+    /* window.log.push(url); */
+    Log(url);
     filePath = req.url;
     if (filePath == '/')
         filePath = './index.html';
@@ -75,11 +75,36 @@ app.get("*", async (req, res) => {
             res.end(content, 'utf-8');
         }
     });
-});
+}
 
 function checkFileExists(file) {
     return fs.promises.access(file, fs.constants.F_OK)
              .then(() => true)
              .catch(() => false)
-  }
+}
 
+function Log(log){
+    // We go through all items and change the value of the id attribute to empty
+    let items = document.querySelectorAll('#logList li');
+    for(let i=0; i<items.length; i++){
+        items[i].setAttribute("id","");
+    }
+
+    let date = new Date();
+    date = date.toISOString().replaceAll("Z","").replaceAll("T"," ");
+    // We add the items
+    let newLi = document.createElement('li');
+    newLi.setAttribute("id","last");
+    newLi.innerHTML = "<strong>"+date+"</strong>" + log;
+    document.querySelector('#logList').appendChild(newLi);
+
+    // Currently there is only one identifier called "last"
+    window.location.href = '#last';
+}
+
+
+
+
+  module.exports = {
+    serverGetFunc
+  };

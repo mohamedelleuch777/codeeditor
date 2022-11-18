@@ -18,7 +18,7 @@
 		#main-container {
 			position: relative;
 			width: 100vw;
-			height: 100vh;
+			height: 90vh;
 		}
 		
 		#editor {
@@ -99,6 +99,29 @@
 		.error {
 			background-color: #dc3741 !important;
 		}
+		#logList {
+			overflow-y: scroll;
+			height: calc(10vh - 2px);
+			border-top: solid 2px #ccc;
+			margin: 0;
+			list-style: none;
+    		padding: 0px;
+		}
+		#logList li {
+			border-top: solid 1px;
+		}
+		#logList li:last-child {
+			border-bottom: solid 1px;
+		}
+		#logList li:hover {
+			background-color: #99c9fbd4;
+		}
+		#logList li strong {
+			border-right: solid 1px;
+			border-left: solid 1px;
+			margin-right: 40px;
+			padding: 0 25px;
+		}
 	</style>
 	<script type="text/javascript">
       
@@ -125,6 +148,7 @@
 		<a class="dropdown-item" onclick="selectContextMenuItem(event)" href="#">Menu Not Ready Yet</a>
 		<a class="dropdown-item" onclick="selectContextMenuItem(event)" href="#">Menu Not Ready Yet</a>
     </div>
+	<ul id="logList"></ul>
 <script>
 	'use strict';
     const {

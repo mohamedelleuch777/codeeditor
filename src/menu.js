@@ -89,6 +89,12 @@ const template = [
       ]
     },
     {
+      label: "Developement Test Server",
+      submenu: [
+        { label: "Start Development Server (DTS)", click: (e) => handleMenuActions(e) },
+      ]
+    },
+    {
       label: 'Window',
       submenu: [
         { role: 'minimize' },
@@ -168,7 +174,11 @@ function handleMenuActions(evt) {
       break;
       case "Generate Test Link":
           // window.createOutputFile(window.brutFile)
-          mainWindow.webContents.send('generate_test_ink');
+          mainWindow.webContents.send('generate_test_link');
+      break;
+      case "Start Development Server (DTS)":
+          // window.createOutputFile(window.brutFile)
+          mainWindow.webContents.send('start_dev_server');
       break;
   }
 }
