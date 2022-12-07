@@ -53,22 +53,39 @@
 		    color: #fff;
 			background-color: #ffb395;
 		}
-		li.fiction-item.event:before {
-		    content: 'e';
+		li.fiction-item.async:before {
+		    content: 'A';
 		    position: absolute;
 		    left: 13px;
 		    border: solid 1px #df0000;
-		    width: 15px;
-		    height: 15px;
+		    width: 20px;
+		    height: 20px;
 		    top: 50%;
 		    transform: translate(-50%, -50%);
 		    border-radius: 50%;
-		    line-height: 11px;
+		    line-height: 22px;
 		    text-align: center;
 		    font-weight: bold;
-		    font-size: 20px;
+		    font-size: 14px;
 		    color: #fff;
 		    background-color: #df0000;
+		}
+		li.fiction-item.sync:before {
+		    content: 'S';
+		    position: absolute;
+		    left: 13px;
+		    border: solid 1px #0f4ccf;
+		    width: 20px;
+		    height: 20px;
+		    top: 50%;
+		    transform: translate(-50%, -50%);
+		    border-radius: 50%;
+		    line-height: 22px;
+		    text-align: center;
+		    font-weight: bold;
+		    font-size: 14px;
+		    color: #fff;
+		    background-color: #0f4ccf;
 		}
 		li.fiction-item.test {
 			background-color: #37dc62;
@@ -122,6 +139,12 @@
 			border-left: solid 1px;
 			margin-right: 40px;
 			padding: 0 25px;
+		}
+		.btn-sync {
+			background-color: #0f4ccf !important;
+		}
+		.btn-async {
+			background-color: #df0000 !important;
 		}
 	</style>
 	<script type="text/javascript">

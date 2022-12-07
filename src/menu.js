@@ -92,6 +92,14 @@ const template = [
       label: "Developement Test Server",
       submenu: [
         { label: "Start Development Server (DTS)", click: (e) => handleMenuActions(e) },
+        { label: "Stop Development Server (DTS)", click: (e) => handleMenuActions(e) },
+      ]
+    },
+    {
+      label: "GIT Operations",
+      submenu: [
+        { label: "Push Code", click: (e) => handleMenuActions(e) },
+        { label: "Pull Code", click: (e) => handleMenuActions(e) },
       ]
     },
     {
@@ -149,36 +157,37 @@ setTimeout(() => {
 function handleMenuActions(evt) {
   switch(evt.label) {
       case "Save":
-          // window.createOutputFile(window.brutFile)
           mainWindow.webContents.send('save');
       break;
       case "Open":
-          // window.createOutputFile(window.brutFile)
           mainWindow.webContents.send('open');
       break;
       case "Create":
-          // window.createOutputFile(window.brutFile)
           mainWindow.webContents.send('create');
       break;
       case "Remove":
-          // window.createOutputFile(window.brutFile)
           mainWindow.webContents.send('remove');
       break;
       case "Rename":
-          // window.createOutputFile(window.brutFile)
           mainWindow.webContents.send('rename');
       break;
       case "Set ON/OFF Test Mode":
-          // window.createOutputFile(window.brutFile)
           mainWindow.webContents.send('set_test_mode');
       break;
       case "Generate Test Link":
-          // window.createOutputFile(window.brutFile)
           mainWindow.webContents.send('generate_test_link');
       break;
       case "Start Development Server (DTS)":
-          // window.createOutputFile(window.brutFile)
           mainWindow.webContents.send('start_dev_server');
+      break;
+      case "Stop Development Server (DTS)":
+          mainWindow.webContents.send('stop_dev_server');
+      break;
+      case "Push Code":
+          mainWindow.webContents.send('git_push');
+      break;
+      case "Pull Code":
+          mainWindow.webContents.send('git_pull');
       break;
   }
 }

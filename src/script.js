@@ -95,7 +95,7 @@ function extractClassMethod(classCode,match) {
         endPosition: endPosition,
         name: methodName,
         body: methodBody,
-        async: isAsync,
+        isAsync: isAsync,
         testMode: tst
     }
     previousMethodStartingPosition = startPosition;
@@ -106,7 +106,7 @@ function extractClassMethod(classCode,match) {
 function addFictionList(methObj) {
     let ul = document.getElementById("fiction-list");
     let ulHtml = ul.innerHTML;
-    ulHtml += `\n\t\t<li class="fiction-item ${methObj.event?"event":""} ${methObj.testMode?"test":""}" fiction-id=${methObj.id} onclick="handleItemSelection(event)">${methObj.name}</li>`;
+    ulHtml += `\n\t\t<li class="fiction-item ${methObj.isAsync?"async":"sync"} ${methObj.testMode?"test":""}" fiction-id=${methObj.id} onclick="handleItemSelection(event)">${methObj.name}</li>`;
     ul.innerHTML = ulHtml;
 }
 
@@ -172,17 +172,27 @@ const handleItemSelection = (evt) => {
 }
 
 const clickedOnBefore = (evt) => {
-    let msg = "This fiction doesn't have events handling", type = "error";
-    if(methodsObject.methodList[evt.target.getAttribute("fiction-id")].event) {
-        msg = "This fiction is handling events";
-        type = "success";
-    }
     Swal.fire({
-        title: 'Notification!',
-        text: msg,
-        icon: type,
-        confirmButtonText: 'OK'
-    })
+        title: 'Set Function Sync/Async mode',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Async',
+        denyButtonText: 'Sync',
+        customClass: {
+          actions: 'my-actions',
+          cancelButton: 'order-1 right-gap',
+          confirmButton: 'btn-async',
+          denyButton: 'btn-sync',
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+            methodsObject.methodList[evt.target.getAttribute("fiction-id")].isAsync = true;
+            Swal.fire('Async mode has been activated for this function', '', 'success')
+        } else if (result.isDenied) {
+            methodsObject.methodList[evt.target.getAttribute("fiction-id")].isAsync = false;
+            Swal.fire('Sync mode has been activated for this function', '', 'success')
+        }
+      })
 }
 
 const selectFictionFromList = (evt) => {
@@ -238,7 +248,7 @@ function createOutputFile() {
     let filePart3 = /*"\r\n\r\n\r\n" +*/ mainSource.substring(methodsObject.endPosition);
     filePart3 = filePart3.substring(0,filePart3.lastIndexOf("$(window).ready(() => {"));
     methodsObject.methodList.forEach(element => {
-        filePart2 += element.async ? "async " : "" ;
+        filePart2 += element.isAsync ? "async " : "" ;
         filePart2 += element.name + "(" + (element.event?element.event:"") + ") {";
         filePart2 += element.testMode ? element.testMode.value :  "";
 	element.body = removeExtraWhiteSpaceFromFunctionBody(element.body, ['\n', '\r']);
@@ -537,10 +547,11 @@ function generateTestLink () {
 }
 
 
-    const express = require('express');
-    const port = 6695;
-    const app = express();
-    app.get("*", serverGetFunc );
+const express = require('express');
+const port = 6695;
+const app = express();
+app.get("*", serverGetFunc );
+
 function startDevServer() {
     app.listen(port, "", function(err) {
         try {
@@ -551,6 +562,10 @@ function startDevServer() {
             console.log("error server");
         }
     });
+}
+
+function stopDevServer() {
+    app.close();
 }
 
 function generateUuidV4() {
@@ -580,9 +595,26 @@ function ShellExecute(cmd) {
     });
 }
 
-function GIT_Add() {}
-function GIT_Commit() {}
-function GIT_Push() {}
+async function GIT_Status() {
+    console.log(await ShellExecute(`git status`));
+}
+async function GIT_Add() {
+    await ShellExecute(`git add .`);
+}
+async function GIT_Commit() {
+    await ShellExecute(`git commit -m"${msg}"`);
+}
+async function GIT_Push() {
+    await ShellExecute(`git push`);
+}
+
+async function gitPushCode() {
+    console.log("this line is working");
+    await GIT_Status();
+    await GIT_Add();
+    await GIT_Commit();
+    await GIT_Push();
+}
 
 
 const { ipcRenderer } = require('electron');
@@ -595,4 +627,7 @@ ipcRenderer.on('rename', (evt, msg) => renameMethod());
 ipcRenderer.on('set_test_mode', (evt, msg) => setTestMode());
 ipcRenderer.on('generate_test_link', (evt, msg) => generateTestLink());
 ipcRenderer.on('start_dev_server', (evt, msg) => startDevServer());
+ipcRenderer.on('stop_dev_server', (evt, msg) => stopDevServer());
+ipcRenderer.on('git_push', (evt, msg) => gitPushCode());
+ipcRenderer.on('git_pull', (evt, msg) => gitPullCode());
 
