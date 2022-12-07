@@ -550,10 +550,11 @@ function generateTestLink () {
 const express = require('express');
 const port = 6695;
 const app = express();
+let serverInstance;
 app.get("*", serverGetFunc );
 
 function startDevServer() {
-    app.listen(port, "", function(err) {
+    serverInstance = app.listen(port, "", function(err) {
         try {
             console.log("... port %d in %s mode", port, app.settings.env);
             Log("Server is running on local machine on port: "+port);
@@ -565,7 +566,9 @@ function startDevServer() {
 }
 
 function stopDevServer() {
-    app.close();
+    serverInstance.close();
+    Log("Server is running on local machine on port: "+port);
+    document.getElementById("logList").style.backgroundColor = "#ccc"
 }
 
 function generateUuidV4() {
