@@ -88,6 +88,8 @@ function extractClassMethod(classCode,match) {
     methodBody = classCode.substring(endDeclarationPosition+1, endPosition);
     let tst = getTestModeData(methodBody);
     tst && (methodBody = methodBody.replace(tst.value,''));
+    methodBody = removeLastInstance(methodBody,"\nthis.methodsEndedExecutionCount++;\n");
+    methodBody = removeLastInstance(methodBody,"\r\nthis.methodsEndedExecutionCount++;\r\n");
     let method = {
         id: methodId,
         event: event,
@@ -100,7 +102,16 @@ function extractClassMethod(classCode,match) {
     }
     previousMethodStartingPosition = startPosition;
     methodId++;
+
     return method;
+}
+
+function removeLastInstance(mainStr, badtext) {
+    var charpos = mainStr.lastIndexOf(badtext);
+    if (charpos<0) return mainStr;
+    ptone = mainStr.substring(0,charpos);
+    pttwo = mainStr.substring(charpos+(badtext.length));
+    return (ptone+pttwo);
 }
 
 function addFictionList(methObj) {
@@ -255,7 +266,15 @@ function createOutputFile() {
         if(element.body[0]!=='\n' || element.body[0]!=='\r') filePart2+='\n';
         filePart2 += element.body;
         if(element.body[element.body.length-1]!=='\n' || element.body[element.body.length-1]!=='\r') filePart2+='\n';
-        filePart2 += "}\n\r\n\r";
+        filePart2 += `
+this.methodsEndedExecutionCount++;
+}
+/*
+######################################################################################################################################
+function ended
+######################################################################################################################################
+*/
+`;
     });
     filePart2 += `
 }
@@ -567,7 +586,7 @@ function startDevServer() {
 
 function stopDevServer() {
     serverInstance.close();
-    Log("Server is running on local machine on port: "+port);
+    Log("The server was stopped");
     document.getElementById("logList").style.backgroundColor = "#ccc"
 }
 
