@@ -626,8 +626,8 @@ function ShellExecute(cmd) {
 }
 
 async function gitPushCode() {
-    console.log("this line is working");
-    await GIT_Status();
+    console.log("zagrebde__________",await GIT_Status());
+    return;
     await GIT_Add();
     await GIT_Commit();
     await GIT_Push();

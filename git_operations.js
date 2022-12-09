@@ -2,9 +2,9 @@ const { exec } = require("child_process");
 
 function ShellExecute(cmd) {
     return new Promise((resolve) => {
-        exec(cmd, (error, stdout, stderr) => {
+        exec(cmd, {cwd: settings.gitPath}, (error, stdout, stderr) => {
         if (error) {
-            console.log(`O93OD_FAM_____: ${error.message}`);
+            console.log(`Error_____: ${error.message}`);
             resolve(false);
             return;
         }
@@ -22,7 +22,7 @@ function ShellExecute(cmd) {
 }
 
 async function GIT_Status() {
-    console.log(await ShellExecute(`git status`));
+    console.log(await ShellExecute(`git --work-tree="${settings.gitPath}" status`));
 }
 async function GIT_Add() {
     await ShellExecute(`git add .`);
