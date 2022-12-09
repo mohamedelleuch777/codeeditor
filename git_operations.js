@@ -1,28 +1,45 @@
 const { exec } = require("child_process");
+const path_         = require('path');
 
 function ShellExecute(cmd) {
     return new Promise((resolve) => {
-        exec(cmd, {cwd: settings.gitPath}, (error, stdout, stderr) => {
+        exec(cmd, {cwd: path_.resolve(settings.gitPath)}, (error, stdout, stderr) => {
         if (error) {
             console.log(`Error_____: ${error.message}`);
-            resolve(false);
+            resolve({
+                success: false,
+                message: error.message
+            });
             return;
         }
         if (stderr) {
             console.log(`stderr_____: ${stderr}`);
-            resolve(false);
+            resolve({
+                success: false,
+                message: stderr
+            });
             return;
         }
         if (stdout !== "") {
             console.log(`${stdout}`);
+            resolve({
+                success: true,
+                message: stdout
+            });
         }
-        resolve(true);
         });
     });
 }
 
 async function GIT_Status() {
-    console.log(await ShellExecute(`git --work-tree="${settings.gitPath}" status`));
+    // nothing to commit, working tree clean
+    let result = await ShellExecute(`git  status`);
+    if(result.success) {
+        if(result.message.includes('nothing to commit, working tree clean')) {
+            return true;
+        }
+    }
+    return false;
 }
 async function GIT_Add() {
     await ShellExecute(`git add .`);
