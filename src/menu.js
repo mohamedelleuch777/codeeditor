@@ -29,8 +29,10 @@ const template = [
     {
       label: 'File',
       submenu: [
-        { role: 'user_open', label: "Open", click: (e) => handleMenuActions(e) },
+        { role: 'user_refresh', label: "Refresh", click: (e) => handleMenuActions(e) },
+        { type: 'separator' },
         { role: 'user_save', label: "Save", click: (e) => handleMenuActions(e) },
+        { type: 'separator' },
         isMac ? { role: 'close' } : { role: 'quit' }
       ]
     },
@@ -159,8 +161,8 @@ function handleMenuActions(evt) {
       case "Save":
           mainWindow.webContents.send('save');
       break;
-      case "Open":
-          mainWindow.webContents.send('open');
+      case "Refresh":
+          mainWindow.webContents.send('refresh');
       break;
       case "Create":
           mainWindow.webContents.send('create');

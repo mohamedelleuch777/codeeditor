@@ -158,7 +158,6 @@
 			}
 			window.onEditorInput = onEditorInput;
 		}
-
 	</script>
 </head>
 <body>
@@ -238,6 +237,9 @@
         function selectContextMenuItem(event) {
         	console.log("menu clicked", event.target);
         }
+		setTimeout(() => {
+			selectFile();
+		}, 300);
 	</script>
 </body>
 </html>

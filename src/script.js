@@ -4,6 +4,7 @@ var fs      = require('fs');
 let data = fs.readFileSync('data.json');
 let settings = JSON.parse(data);
 const { serverGetFunc, Log } = require('../server');
+const { GIT_Status, GIT_Add, GIT_Commit, GIT_Push } = require('../git_operations');
 
 
 TEST_MODE_COLOR                 = settings.testModeColor;
@@ -337,6 +338,13 @@ async function selectFile() {
     });
 }
 
+function scriptLibRefreshFromFile() {
+    selectFile();
+    setTimeout(() => {
+        selectFile();
+    }, 300);
+}
+
 function popupAutoClose(time) {
     let timerInterval
     Swal.fire({
@@ -617,19 +625,6 @@ function ShellExecute(cmd) {
     });
 }
 
-async function GIT_Status() {
-    console.log(await ShellExecute(`git status`));
-}
-async function GIT_Add() {
-    await ShellExecute(`git add .`);
-}
-async function GIT_Commit() {
-    await ShellExecute(`git commit -m"${msg}"`);
-}
-async function GIT_Push() {
-    await ShellExecute(`git push`);
-}
-
 async function gitPushCode() {
     console.log("this line is working");
     await GIT_Status();
@@ -642,7 +637,7 @@ async function gitPushCode() {
 const { ipcRenderer } = require('electron');
 
 ipcRenderer.on('save', (evt, msg) => createOutputFile());
-ipcRenderer.on('open', (evt, msg) => selectFile());
+ipcRenderer.on('refresh', (evt, msg) => scriptLibRefreshFromFile());
 ipcRenderer.on('create', (evt, msg) => createMethod());
 ipcRenderer.on('remove', (evt, msg) => removeMethod());
 ipcRenderer.on('rename', (evt, msg) => renameMethod());

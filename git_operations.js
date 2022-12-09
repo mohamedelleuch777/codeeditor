@@ -21,17 +21,32 @@ function ShellExecute(cmd) {
     });
 }
 
-function GIT_Add() {}
-function GIT_Commit() {}
-function GIT_Push() {} // hi there
-function FTP_Connect() {}
+async function GIT_Status() {
+    console.log(await ShellExecute(`git status`));
+}
+async function GIT_Add() {
+    await ShellExecute(`git add .`);
+}
+async function GIT_Commit(msg="empty") {
+    await ShellExecute(`git commit -m"${msg}"`);
+}
+async function GIT_Push() {
+    await ShellExecute(`git push`);
+}
 
+module.exports = {
+    GIT_Status,
+    GIT_Add,
+    GIT_Commit,
+    GIT_Push,
+}
+/*
 async function main() {
-/*     await ShellExecute(`git pull origin master`);
+     await ShellExecute(`git pull origin master`);
     await ShellExecute(`git status`);
     await ShellExecute(`git add .`);
     await ShellExecute(`git commit -m"git operations v1"`);
-    await ShellExecute(`git push origin master`); */
+    await ShellExecute(`git push origin master`); 
     FTP_Connect();
     
 }
@@ -64,4 +79,4 @@ FTP_Connect = () => {
     })
 }
 
-main()
+*/
