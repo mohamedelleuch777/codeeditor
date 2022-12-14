@@ -56,8 +56,13 @@ async function GIT_Add() {
 async function GIT_Commit(msg="no comment passed -default message!") {
     return await ShellExecute(`git commit -m"${msg}"`);
 }
+
 async function GIT_Push() {
     return await ShellExecute(`git push`);
+}
+
+async function GIT_Pull() {
+    return await ShellExecute(`git pull`);
 }
 
 module.exports = {
@@ -65,6 +70,7 @@ module.exports = {
     GIT_Add,
     GIT_Commit,
     GIT_Push,
+    GIT_Pull
 }
 /*
 async function main() {

@@ -644,6 +644,10 @@ async function gitPushCode() {
     re = await GIT_Push();
 }
 
+const gitPullCode = async () => {
+    let re = await GIT_Pull(result.value);
+}
+
 
 const { ipcRenderer } = require('electron');
 
