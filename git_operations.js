@@ -3,31 +3,39 @@ const path_         = require('path');
 
 function ShellExecute(cmd) {
     return new Promise((resolve) => {
-        exec(cmd, {cwd: path_.resolve(settings.gitPath)}, (error, stdout, stderr) => {
-        if (error) {
-            console.log(`Error_____: ${error.message}`);
+        try {
+            exec(cmd, {cwd: path_.resolve(settings.gitPath)}, (error, stdout, stderr) => {
+                if (error) {
+                    console.log(`Error_____: ${error.message}`);
+                    resolve({
+                        success: false,
+                        message: error.message
+                    });
+                    return;
+                }
+                if (stderr) {
+                    console.log(`stderr_____: ${stderr}`);
+                    resolve({
+                        success: false,
+                        message: stderr
+                    });
+                    return;
+                }
+                if (stdout === "" || stdout) {
+                    console.log(`${stdout}`);
+                    resolve({
+                        success: true,
+                        message: stdout
+                    });
+                }
+            });
+        } catch (err) {
+            console.log(`catcherr_____: ${err}`);
             resolve({
                 success: false,
-                message: error.message
-            });
-            return;
-        }
-        if (stderr) {
-            console.log(`stderr_____: ${stderr}`);
-            resolve({
-                success: false,
-                message: stderr
-            });
-            return;
-        }
-        if (stdout !== "") {
-            console.log(`${stdout}`);
-            resolve({
-                success: true,
-                message: stdout
+                message: err
             });
         }
-        });
     });
 }
 
@@ -43,12 +51,13 @@ async function GIT_Status() {
 }
 async function GIT_Add() {
     await ShellExecute(`git add .`);
+    return true;
 }
-async function GIT_Commit(msg="empty") {
-    await ShellExecute(`git commit -m"${msg}"`);
+async function GIT_Commit(msg="no comment passed -default message!") {
+    return await ShellExecute(`git commit -m"${msg}"`);
 }
 async function GIT_Push() {
-    await ShellExecute(`git push`);
+    return await ShellExecute(`git push`);
 }
 
 module.exports = {

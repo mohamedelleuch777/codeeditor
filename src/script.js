@@ -226,7 +226,6 @@ const selectFictionFromList = (evt) => {
 
 
 function removeExtraWhiteSpaceFromFunctionBody(source, whiteSpaceChar) {
-	debugger
 	let res = "", started = false;
 	for (let i=0; i<source.length; i++) {
 		let c = source[i];
@@ -604,33 +603,45 @@ function generateUuidV4() {
     );
 }
 
-function ShellExecute(cmd) {
-    return new Promise((resolve) => {
-        exec(cmd, (error, stdout, stderr) => {
-        if (error) {
-            console.log(`error: ${error.message}`);
-            resolve(false);
-            return;
-        }
-        if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            resolve(false);
-            return;
-        }
-        if (stdout !== "") {
-            console.log(`stdout: ${stdout}`);
-        }
-        resolve(true);
-        });
-    });
-}
-
 async function gitPushCode() {
-    console.log("zagrebde__________",await GIT_Status());
-    return;
-    await GIT_Add();
-    await GIT_Commit();
-    await GIT_Push();
+    if(await GIT_Status()) {
+        Swal.fire({
+            title: 'Error!',
+            text: 'Nothing to commit!',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        })
+        return;
+    }
+    await GIT_Add()
+    let result = await Swal.fire({
+        title: "Rename!",
+        text: "Write message to the commit here:",
+        input: 'text',
+        showCancelButton: true,
+        inputAttributes: {
+          placeholder: '-m "${message}"'
+        }
+    })
+    if (!result.value) {
+        Swal.fire({
+            title: 'Error!',
+            text: 'Cannot commit without a message',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        })
+    }
+    let re = await GIT_Commit(result.value);
+    const regex = /\d* file changed, \d* insertion(s*)\(\+\), \d* deletion(s*)\(-\)/gm;
+    if(!regex.exec(re.message)){
+        Swal.fire({
+            title: 'Error!',
+            text: 'Commit did\'t work',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        })
+    }
+    re = await GIT_Push();
 }
 
 

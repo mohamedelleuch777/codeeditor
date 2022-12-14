@@ -188,6 +188,9 @@ function handleMenuActions(evt) {
       case "Push Code":
           mainWindow.webContents.send('git_push');
       break;
+      case "Push Code":
+          mainWindow.webContents.send('git_push');
+      break;
       case "Pull Code":
           mainWindow.webContents.send('git_pull');
       break;
