@@ -4,7 +4,7 @@ var fs      = require('fs');
 let data = fs.readFileSync('data.json');
 let settings = JSON.parse(data);
 const { serverGetFunc, Log } = require('../server');
-const { GIT_Status, GIT_Add, GIT_Commit, GIT_Push } = require('../git_operations');
+const { GIT_Status, GIT_Add, GIT_Commit, GIT_Push, GIT_Pull } = require('../git_operations');
 
 
 TEST_MODE_COLOR                 = settings.testModeColor;
@@ -154,12 +154,14 @@ function Compile(sourceCode,className) {
         addFictionList(tempMeth)
     }
     window.methodsObject.methodList = methodList;
+    /*
     Swal.fire({
         title: 'Info!',
         text: 'The Script Lib has been loaded',
         icon: 'success',
         confirmButtonText: 'OK'
-      })
+    })
+    */
 }
 
 function loadCodeInEditor(editor, code) {
@@ -307,12 +309,14 @@ if(window.localStorage.debug==='true') {
                 })
             } else {
                 Log("SAVED: "+settings.path);
+                /*
                 Swal.fire({
                     title: 'Info!',
                     text: 'The Script Lib has been Saved',
                     icon: 'success',
                     confirmButtonText: 'OK'
                 })
+                */
             }
         }, timeout);
     })
@@ -641,11 +645,29 @@ async function gitPushCode() {
             confirmButtonText: 'OK'
         })
     }
+    Log("Commited as: "+result.value);
     re = await GIT_Push();
+    /*const regex_1 = /To\shttps:\/\/\w+\.\w+\/.+\.git\\n+\s+\w+\.\.\w+\s+\w+\s+->\s+\w+/gm;
+    if(!regex_1.exec(re.message)){
+        Swal.fire({
+            title: 'Error!',
+            text: 'Couldn\'t push code to the remote repository\n'+re.message,
+            icon: 'error',
+            confirmButtonText: 'OK'
+        })
+        return;
+    }*/
+    Log("Pushed to remote.");
 }
 
 const gitPullCode = async () => {
-    let re = await GIT_Pull(result.value);
+    let re = await GIT_Pull();
+    const regex = /Already up to date\./gm;
+    if(regex.exec(re.message)){
+        Log("Nothing to pull. Already up to date.");
+    } else {
+        Log("Code pulled from remote repository.");
+    }
 }
 
 

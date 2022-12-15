@@ -31,7 +31,7 @@ const template = [
       submenu: [
         { role: 'user_refresh', label: "Refresh", click: (e) => handleMenuActions(e) },
         { type: 'separator' },
-        { role: 'user_save', label: "Save", click: (e) => handleMenuActions(e) },
+        { role: 'user_save', label: "Save", click: (e) => handleMenuActions(e), accelerator: isMac ? 'Cmd+S' : 'Ctrl+S' },
         { type: 'separator' },
         isMac ? { role: 'close' } : { role: 'quit' }
       ]
