@@ -29,7 +29,7 @@ const template = [
     {
       label: 'File',
       submenu: [
-        { role: 'user_refresh', label: "Refresh", click: (e) => handleMenuActions(e) },
+        { role: 'user_refresh', label: "Refresh", click: (e) => handleMenuActions(e), accelerator: isMac ? 'Alt+Cmd+R' : 'Alt+Ctrl+R'  },
         { type: 'separator' },
         { role: 'user_save', label: "Save", click: (e) => handleMenuActions(e), accelerator: isMac ? 'Cmd+S' : 'Ctrl+S' },
         { type: 'separator' },
