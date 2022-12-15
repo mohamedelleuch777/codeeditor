@@ -298,7 +298,7 @@ if(window.localStorage.debug==='true') {
     fs.writeFile(settings.path, outFile, "utf8", function(err) {
         const min = 300, max = 750;
         let timeout = Math.random() * (max - min) + min;
-        popupAutoClose();
+        popupAutoClose("Saving Script Lib!",9999999999999);
         setTimeout(() => {
             if(err){
                 Swal.fire({
@@ -317,6 +317,7 @@ if(window.localStorage.debug==='true') {
                     confirmButtonText: 'OK'
                 })
                 */
+                popupAutoClose("",1);
             }
         }, timeout);
     })
@@ -348,18 +349,18 @@ function scriptLibRefreshFromFile() {
     }, 300);
 }
 
-function popupAutoClose(time) {
+function popupAutoClose(title,time) {
     let timerInterval
     Swal.fire({
-    title: 'Saving Script Lib!',
-    html: 'Remaining time <b></b> milliseconds.',
+    title: title,
+    html: 'Please wait until the operation finishes',
     timer: time,
     timerProgressBar: true,
     didOpen: () => {
         Swal.showLoading()
         const b = Swal.getHtmlContainer().querySelector('b')
         timerInterval = setInterval(() => {
-        b.textContent = Swal.getTimerLeft()
+            b && (b.textContent = Swal.getTimerLeft());
         }, 100)
     },
     willClose: () => {
@@ -368,7 +369,7 @@ function popupAutoClose(time) {
     }).then((result) => {
     /* Read more about handling dismissals below */
     if (result.dismiss === Swal.DismissReason.timer) {
-        console.log('File was saved successfully')
+        console.log('loading popup closed')
     }
     })
 }
@@ -608,6 +609,7 @@ function generateUuidV4() {
 }
 
 async function gitPushCode() {
+    Log("Commiting & Pushing The Code with GIT");
     if(await GIT_Status()) {
         Swal.fire({
             title: 'Error!',
@@ -615,6 +617,7 @@ async function gitPushCode() {
             icon: 'error',
             confirmButtonText: 'OK'
         })
+        Log("Nothing to commit!");
         return;
     }
     await GIT_Add()
@@ -634,7 +637,10 @@ async function gitPushCode() {
             icon: 'error',
             confirmButtonText: 'OK'
         })
+        Log("Cannot commit without a message");
+        return;
     }
+    popupAutoClose("Commiting & Pushing The Code with GIT");
     let re = await GIT_Commit(result.value);
     const regex = /\d* file changed, \d* insertion(s*)\(\+\), \d* deletion(s*)\(-\)/gm;
     if(!regex.exec(re.message)){
@@ -658,16 +664,23 @@ async function gitPushCode() {
         return;
     }*/
     Log("Pushed to remote.");
+    popupAutoClose("",1)
 }
 
 const gitPullCode = async () => {
+    popupAutoClose("Pulling The Code with GIT");
+    Log("Pulling The Code with GIT");
     let re = await GIT_Pull();
-    const regex = /Already up to date\./gm;
-    if(regex.exec(re.message)){
+    const regex_ok = /Already up to date\./gm;
+    const regex_aborted = /Please commit your changes or stash them before you merge\.\nAborting/gm;
+    if(regex_ok.exec(re.message)){
         Log("Nothing to pull. Already up to date.");
+    } else if(regex_aborted.exec(re.message)){
+        Log("Pull was aborted. You need to commit changes first");
     } else {
         Log("Code pulled from remote repository.");
     }
+    popupAutoClose("",1)
 }
 
 
