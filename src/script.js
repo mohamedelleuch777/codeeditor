@@ -211,11 +211,7 @@ const clickedOnBefore = (evt) => {
 }
 
 const selectFictionFromList = (evt) => {
-    let items = document.getElementsByClassName('fiction-item');
-    for(let i=0; i<items.length; i++) {
-        items[i] && items[i].classList.remove("active");
-    }
-    evt.target.classList.add("active");
+    setlectLineList(evt);
     let fictionId = evt.target.getAttribute('fiction-id');
     window.openedMethodId = fictionId;
     let code = methodsObject.methodList[fictionId].body;
@@ -227,6 +223,23 @@ const selectFictionFromList = (evt) => {
     }
 };
 
+const setlectLineList = (param) => {
+    if(param) {
+        if(param.target) {
+            let items = document.getElementsByClassName('fiction-item');
+            for(let i=0; i<items.length; i++) {
+                items[i] && items[i].classList.remove("active");
+            }
+            param.target.classList.add("active");
+        } else {
+            let items = document.getElementsByClassName('fiction-item');
+            for(let i=0; i<items.length; i++) {
+                items[i] && items[i].classList.remove("active");
+            }
+            items[parseInt(openedMethodId)].classList.add("active");
+        }
+    }
+}
 
 function removeExtraWhiteSpaceFromFunctionBody(source, whiteSpaceChar) {
 	let res = "", started = false;
@@ -290,8 +303,9 @@ function ended
     });    filePart3 += `
 })
 if(window.localStorage.debug==='true') {
-    console.warn("SCRIPT LIB END EXECUTION TIME: ", new Date().getTime());
-    console.warn("SCRIPT LIB TOOK SYNCHRONOUSLY: ", new Date().getTime(), "MILLISECONDS");
+    window.scriptLibEndTime = new Date().getTime();
+    console.warn("SCRIPT LIB END EXECUTION TIME: ", scriptLibEndTime);
+    console.warn("SCRIPT LIB TOOK SYNCHRONOUSLY: ", scriptLibEndTime - scriptLibStartTime, "MILLISECONDS");
 }
 `;
     //filePart1 = "\nif(window.localStorage.debug==='true')console.warn(\"SCRIPT LIB START TIME: \", new Date().getTime());\n"+ filePart1
@@ -339,6 +353,11 @@ async function selectFile() {
     fs.readFile(file, "utf8",function(error, data){
         startPosition = data.indexOf("class " + settings.class + " {");
         Compile(data,settings.class);
+        if(typeof openedMethodId !== 'undefined') {
+            let code = methodsObject.methodList[openedMethodId].body;
+            setlectLineList(openedMethodId)
+            loadCodeInEditor(document.getElementById('editor'), code);
+        }
         Log("OPEN: "+file);
     });
 }
@@ -680,6 +699,20 @@ const gitPullCode = async () => {
         Log("Pull was aborted. You need to commit changes first");
     } else {
         Log("Code pulled from remote repository.");
+        let result = await Swal.fire({
+            title: 'Do you want reload after pull?',
+            showDenyButton: true,
+            confirmButtonText: 'Yes',
+            denyButtonText: 'No',
+            customClass: {
+              actions: 'my-actions',
+              confirmButton: 'order-2',
+              denyButton: 'order-3',
+            }
+        })
+        if (result.isConfirmed) {
+            scriptLibRefreshFromFile();
+        }
     }
     popupAutoClose("",1)
 }
