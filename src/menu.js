@@ -121,14 +121,9 @@ const template = [
     },
     {
       role: 'help',
+      label: '?',
       submenu: [
-        {
-          label: 'Learn More',
-          click: async () => {
-            const { shell } = require('electron')
-            await shell.openExternal('https://electronjs.org')
-          }
-        }
+        { label: 'About', click: (e) => handleMenuActions(e) },
       ]
     }
   ]
@@ -193,6 +188,9 @@ function handleMenuActions(evt) {
       break;
       case "Pull Code":
           mainWindow.webContents.send('git_pull');
+      break;
+      case "About":
+        mainWindow.webContents.send('about_codeeditor');
       break;
   }
 }

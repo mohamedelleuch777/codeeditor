@@ -1,6 +1,7 @@
 
 
 var fs      = require('fs');
+const path = require('path');
 let data = fs.readFileSync('data.json');
 let settings = JSON.parse(data);
 const { serverGetFunc, Log } = require('../server');
@@ -683,6 +684,72 @@ const gitPullCode = async () => {
     popupAutoClose("",1)
 }
 
+const aboutMe = () => {
+    /**
+    Preparing html and css data in variables and constants 
+    */
+    const styles = {
+        divTitle: "display: flex; justify-content: space-around;",
+        image: "width: 64px;",
+        title: "line-height: 64px",
+        divContent: `   text-align: left;
+                        display: flex;
+                        flex-direction: column;
+                        height: 100px;
+                        justify-content: space-between;`,
+        divLicense: `   text-align: left;
+                        overflow-y: scroll;
+                        height: 350px;
+                        padding: 20px;
+                        border: solid 2px #ccc;
+                        border-radius: 5px;
+                        margin-top: 20px;`
+    }
+    
+    const title =   `
+    <div style="${styles.divTitle}">
+        <img style="${styles.image}" src="${path.join(__dirname, 'lib\\icon.png')}" alt="logo" />
+        <i style="${styles.title}">About CodeEditor v 1.3.54</i>
+    </div>
+    `;
+
+const licenseText = `
+Private Use License with Commercial Use Permission
+
+This license grants the user the right to use the licensed material for private, non-commercial purposes only.
+
+The user may not distribute, modify, or use the licensed material for commercial purposes without the prior written permission of the developer and the fulfillment of any conditions that the developer may require. Permission for commercial use may be obtained by contacting the developer through Email or LinkedIn.
+
+The user acknowledges that no warranty, documentation, or support is provided for non-commercial use of the licensed material. Documentation and support for commercial use may be provided at the discretion of the developer, and may be subject to additional fees.
+
+By using the licensed material, the user agrees to be bound by the terms of this license.
+
+The developer shall not be liable for any damages arising out of the use of the licensed material.
+
+If you have any questions about this license or the terms of use, please contact the developer through Email or LinkedIn.
+`;
+
+const content = `
+    <div style="${styles.divContent.replaceAll('\n','')}">
+        <div><i>LinkedIn: </i><a target="_blank" href="https://www.linkedin.com/in/mohamed-elleuch-b6271188">Mohamed Elleuch</a></div>
+        <div><i>Email: </i><a target="_blank" href="mailto:usher7med@gmail.com">usher7med@gmail.com</a></div>
+        <div><i>Github: </i><a target="_blank" href="https://github.com/mohamedelleuch777">Developper's Github Profile</a></div>
+        <div><i>CodeEditor Repo: </i><a target="_blank" href="https://github.com/mohamedelleuch777/codeeditor">Project Repository</a></div>
+    </div>
+    <div style="${styles.divLicense.replaceAll('\n','')}">
+        ${licenseText.replaceAll('\n','<br>')}
+    </div>
+    `;
+    /**
+    Showing the swal message popup
+    */
+    Swal.fire({
+        title: title.replaceAll('\n',''), 
+        html: content.replaceAll('\n',''),  
+        confirmButtonText: "<u>Close</u>", 
+    });
+}
+
 
 const { ipcRenderer } = require('electron');
 
@@ -697,4 +764,6 @@ ipcRenderer.on('start_dev_server', (evt, msg) => startDevServer());
 ipcRenderer.on('stop_dev_server', (evt, msg) => stopDevServer());
 ipcRenderer.on('git_push', (evt, msg) => gitPushCode());
 ipcRenderer.on('git_pull', (evt, msg) => gitPullCode());
+ipcRenderer.on('about_codeeditor', (evt, msg) => aboutMe());
+
 
