@@ -172,6 +172,7 @@
 			window.openedMethodId && (methodsObject.methodList[openedMethodId].body = view.state.doc.toString());
 			}
 			window.onEditorInput = onEditorInput;
+
 		}
 	</script>
 </head>
@@ -258,6 +259,10 @@
 		setTimeout(() => {
 			selectFile();
 		}, 300);
+		
+		document.querySelector('#editor').oninput = () => {
+			document.querySelector('.fiction-item.active').innerText+=" *"
+		}
 	</script>
 </body>
 </html>

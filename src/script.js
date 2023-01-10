@@ -687,20 +687,20 @@ async function gitPushCode() {
             confirmButtonText: 'OK'
         })
     }
-    Log("Commited as: "+result.value);
-    re = await GIT_Push();
-    /*const regex_1 = /To\shttps:\/\/\w+\.\w+\/.+\.git\\n+\s+\w+\.\.\w+\s+\w+\s+->\s+\w+/gm;
-    if(!regex_1.exec(re.message)){
+    else if(re.message.indexOf('[rejected]')>-1) {
         Swal.fire({
             title: 'Error!',
-            text: 'Couldn\'t push code to the remote repository\n'+re.message,
+            text: 'Push did\'t work',
             icon: 'error',
             confirmButtonText: 'OK'
         })
-        return;
-    }*/
-    Log("Pushed to remote.");
-    popupAutoClose("",1)
+    } 
+    else {
+        Log("Commited as: "+result.value);
+        re = await GIT_Push();
+        Log("Pushed to remote.");
+        popupAutoClose("",1)
+    }
 }
 
 const gitPullCode = async () => {
