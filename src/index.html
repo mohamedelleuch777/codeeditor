@@ -161,6 +161,18 @@
 			font-size: 30px;
 			padding: 0px 10px;
 		}
+
+		li.fiction-item.active.modified:after {
+			position: absolute;
+			content: ' ';
+			width: 15px;
+			height: 15px;
+			border-radius: 50%;
+			right: 5px;
+			top: 50%;
+			transform: translateY(-50%);
+			background: radial-gradient(circle at bottom, #81e8f6, #76deef 10%, #055194 80%, #062745 100%);
+		}
 	</style>
 	<script type="text/javascript">
       
@@ -259,9 +271,9 @@
 		setTimeout(() => {
 			selectFile();
 		}, 300);
-		
+
 		document.querySelector('#editor').oninput = () => {
-			document.querySelector('.fiction-item.active').innerText+=" *"
+			document.querySelector('.fiction-item.active').classList.add("modified");
 		}
 	</script>
 </body>

@@ -289,7 +289,7 @@ function createOutputFile() {
     let filePart1 = mainSource.substring(0,methodsObject.startPosition);
     let filePart2 = "class " + methodsObject.name + " { \n\r";
     let filePart3 = /*"\r\n\r\n\r\n" +*/ mainSource.substring(methodsObject.endPosition);
-    filePart3 = filePart3.substring(0,filePart3.lastIndexOf("$(window).ready(() => {"));
+    filePart3 = filePart3.substring(0,filePart3.lastIndexOf("$(window).on('onWaitingForFictionsStart', () => {"));
     methodsObject.methodList.forEach(element => {
         filePart2 += element.isAsync ? "async " : "" ;
         filePart2 += element.name + "(" + (element.event?element.event:"") + ") {";
@@ -312,18 +312,29 @@ function ended
 }
 `; // class closing               scriptLibFunctions.
 
-    filePart3 += "$(window).ready(() => {\n\r";
+    filePart3 += "$(window).on('onWaitingForFictionsStart', () => {\n\r";
     methodsObject.methodList.forEach(element => {
         let objName = settings.class.charAt(0).toLowerCase() + settings.class.slice(1);
         element.name !== 'constructor' && (filePart3 +=  objName + "." + element.name + "()\n\r");
     });    filePart3 += `
-})
+
+/*
+scriptLib measure performace
+*/
 if(window.localStorage.debug==='true') {
     window.scriptLibEndTime = new Date().getTime();
     console.warn("SCRIPT LIB END EXECUTION TIME: ", scriptLibEndTime);
     console.warn("SCRIPT LIB TOOK SYNCHRONOUSLY: ", scriptLibEndTime - scriptLibStartTime, "MILLISECONDS");
 }
+
+})
+
+window.scriptLibFunctions = new ScriptLibFunctions();
 `;
+    let items = document.getElementsByClassName('fiction-item');
+    for(let i=0; i<items.length; i++) {
+        items[i] && items[i].classList.remove("modified");
+    }
     //filePart1 = "\nif(window.localStorage.debug==='true')console.warn(\"SCRIPT LIB START TIME: \", new Date().getTime());\n"+ filePart1
     let outFile = filePart1 + filePart2 + filePart3;
     fs.writeFile(settings.path, outFile, "utf8", function(err) {
@@ -762,11 +773,11 @@ const aboutMe = () => {
     </div>
     `;
 
-const licenseText = `
-${atob("UHJpdmF0ZSBVc2UgTGljZW5zZSB3aXRoIENvbW1lcmNpYWwgVXNlIFBlcm1pc3Npb24KClRoaXMgbGljZW5zZSBncmFudHMgdGhlIHVzZXIgdGhlIHJpZ2h0IHRvIHVzZSB0aGUgbGljZW5zZWQgbWF0ZXJpYWwgZm9yIHByaXZhdGUsIG5vbi1jb21tZXJjaWFsIHB1cnBvc2VzIG9ubHkuCgpUaGUgdXNlciBtYXkgbm90IGRpc3RyaWJ1dGUsIG1vZGlmeSwgb3IgdXNlIHRoZSBsaWNlbnNlZCBtYXRlcmlhbCBmb3IgY29tbWVyY2lhbCBwdXJwb3NlcyB3aXRob3V0IHRoZSBwcmlvciB3cml0dGVuIHBlcm1pc3Npb24gb2YgdGhlIGRldmVsb3BlciBhbmQgdGhlIGZ1bGZpbGxtZW50IG9mIGFueSBjb25kaXRpb25zIHRoYXQgdGhlIGRldmVsb3BlciBtYXkgcmVxdWlyZS4gUGVybWlzc2lvbiBmb3IgY29tbWVyY2lhbCB1c2UgbWF5IGJlIG9idGFpbmVkIGJ5IGNvbnRhY3RpbmcgdGhlIGRldmVsb3BlciB0aHJvdWdoIEVtYWlsIG9yIExpbmtlZEluLgoKVGhlIHVzZXIgYWNrbm93bGVkZ2VzIHRoYXQgbm8gd2FycmFudHksIGRvY3VtZW50YXRpb24sIG9yIHN1cHBvcnQgaXMgcHJvdmlkZWQgZm9yIG5vbi1jb21tZXJjaWFsIHVzZSBvZiB0aGUgbGljZW5zZWQgbWF0ZXJpYWwuIERvY3VtZW50YXRpb24gYW5kIHN1cHBvcnQgZm9yIGNvbW1lcmNpYWwgdXNlIG1heSBiZSBwcm92aWRlZCBhdCB0aGUgZGlzY3JldGlvbiBvZiB0aGUgZGV2ZWxvcGVyLCBhbmQgbWF5IGJlIHN1YmplY3QgdG8gYWRkaXRpb25hbCBmZWVzLgoKQnkgdXNpbmcgdGhlIGxpY2Vuc2VkIG1hdGVyaWFsLCB0aGUgdXNlciBhZ3JlZXMgdG8gYmUgYm91bmQgYnkgdGhlIHRlcm1zIG9mIHRoaXMgbGljZW5zZS4KClRoZSBkZXZlbG9wZXIgc2hhbGwgbm90IGJlIGxpYWJsZSBmb3IgYW55IGRhbWFnZXMgYXJpc2luZyBvdXQgb2YgdGhlIHVzZSBvZiB0aGUgbGljZW5zZWQgbWF0ZXJpYWwuCgpJZiB5b3UgaGF2ZSBhbnkgcXVlc3Rpb25zIGFib3V0IHRoaXMgbGljZW5zZSBvciB0aGUgdGVybXMgb2YgdXNlLCBwbGVhc2UgY29udGFjdCB0aGUgZGV2ZWxvcGVyIHRocm91Z2ggRW1haWwgb3IgTGlua2VkSW4u")}
-`;
+    const licenseText = `
+    ${atob("UHJpdmF0ZSBVc2UgTGljZW5zZSB3aXRoIENvbW1lcmNpYWwgVXNlIFBlcm1pc3Npb24KClRoaXMgbGljZW5zZSBncmFudHMgdGhlIHVzZXIgdGhlIHJpZ2h0IHRvIHVzZSB0aGUgbGljZW5zZWQgbWF0ZXJpYWwgZm9yIHByaXZhdGUsIG5vbi1jb21tZXJjaWFsIHB1cnBvc2VzIG9ubHkuCgpUaGUgdXNlciBtYXkgbm90IGRpc3RyaWJ1dGUsIG1vZGlmeSwgb3IgdXNlIHRoZSBsaWNlbnNlZCBtYXRlcmlhbCBmb3IgY29tbWVyY2lhbCBwdXJwb3NlcyB3aXRob3V0IHRoZSBwcmlvciB3cml0dGVuIHBlcm1pc3Npb24gb2YgdGhlIGRldmVsb3BlciBhbmQgdGhlIGZ1bGZpbGxtZW50IG9mIGFueSBjb25kaXRpb25zIHRoYXQgdGhlIGRldmVsb3BlciBtYXkgcmVxdWlyZS4gUGVybWlzc2lvbiBmb3IgY29tbWVyY2lhbCB1c2UgbWF5IGJlIG9idGFpbmVkIGJ5IGNvbnRhY3RpbmcgdGhlIGRldmVsb3BlciB0aHJvdWdoIEVtYWlsIG9yIExpbmtlZEluLgoKVGhlIHVzZXIgYWNrbm93bGVkZ2VzIHRoYXQgbm8gd2FycmFudHksIGRvY3VtZW50YXRpb24sIG9yIHN1cHBvcnQgaXMgcHJvdmlkZWQgZm9yIG5vbi1jb21tZXJjaWFsIHVzZSBvZiB0aGUgbGljZW5zZWQgbWF0ZXJpYWwuIERvY3VtZW50YXRpb24gYW5kIHN1cHBvcnQgZm9yIGNvbW1lcmNpYWwgdXNlIG1heSBiZSBwcm92aWRlZCBhdCB0aGUgZGlzY3JldGlvbiBvZiB0aGUgZGV2ZWxvcGVyLCBhbmQgbWF5IGJlIHN1YmplY3QgdG8gYWRkaXRpb25hbCBmZWVzLgoKQnkgdXNpbmcgdGhlIGxpY2Vuc2VkIG1hdGVyaWFsLCB0aGUgdXNlciBhZ3JlZXMgdG8gYmUgYm91bmQgYnkgdGhlIHRlcm1zIG9mIHRoaXMgbGljZW5zZS4KClRoZSBkZXZlbG9wZXIgc2hhbGwgbm90IGJlIGxpYWJsZSBmb3IgYW55IGRhbWFnZXMgYXJpc2luZyBvdXQgb2YgdGhlIHVzZSBvZiB0aGUgbGljZW5zZWQgbWF0ZXJpYWwuCgpJZiB5b3UgaGF2ZSBhbnkgcXVlc3Rpb25zIGFib3V0IHRoaXMgbGljZW5zZSBvciB0aGUgdGVybXMgb2YgdXNlLCBwbGVhc2UgY29udGFjdCB0aGUgZGV2ZWxvcGVyIHRocm91Z2ggRW1haWwgb3IgTGlua2VkSW4u")}
+    `;
 
-const content = `
+    const content = `
     <div style="${styles.divContent.replaceAll('\n','')}">
         ${atob("PGRpdj48aT5MaW5rZWRJbjogPC9pPjxhIHRhcmdldD0iX2JsYW5rIiBocmVmPSJodHRwczovL3d3dy5saW5rZWRpbi5jb20vaW4vbW9oYW1lZC1lbGxldWNoLWI2MjcxMTg4Ij5Nb2hhbWVkIEVsbGV1Y2g8L2E+PC9kaXY+CiAgICAgICAgPGRpdj48aT5FbWFpbDogPC9pPjxhIHRhcmdldD0iX2JsYW5rIiBocmVmPSJtYWlsdG86dXNoZXI3bWVkQGdtYWlsLmNvbSI+dXNoZXI3bWVkQGdtYWlsLmNvbTwvYT48L2Rpdj4KICAgICAgICA8ZGl2PjxpPkdpdGh1YjogPC9pPjxhIHRhcmdldD0iX2JsYW5rIiBocmVmPSJodHRwczovL2dpdGh1Yi5jb20vbW9oYW1lZGVsbGV1Y2g3NzciPkRldmVsb3BwZXIncyBHaXRodWIgUHJvZmlsZTwvYT48L2Rpdj4KICAgICAgICA8ZGl2PjxpPkNvZGVFZGl0b3IgUmVwbzogPC9pPjxhIHRhcmdldD0iX2JsYW5rIiBocmVmPSJodHRwczovL2dpdGh1Yi5jb20vbW9oYW1lZGVsbGV1Y2g3NzcvY29kZWVkaXRvciI+UHJvamVjdCBSZXBvc2l0b3J5PC9hPjwvZGl2Pg==")}
     </div>
@@ -782,6 +793,14 @@ const content = `
         html: content.replaceAll('\n',''),  
         confirmButtonText: "<u>Close</u>", 
     });
+}
+
+
+const collectModifiedBlocks = () => {
+    let items = document.getElementsByClassName('fiction-item');
+    for(let i=0; i<items.length; i++) {
+        items[i] && items[i].classList.remove("modified");
+    }
 }
 
 
