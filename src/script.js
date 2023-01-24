@@ -167,6 +167,7 @@ function Compile(sourceCode,className) {
         if(tempMeth.body[0] === '\n' || tempMeth.body[0] === '\r') tempMeth.body = tempMeth.body.substring(1);
         if(tempMeth.body[tempMeth.body.length-1] === '\n' || tempMeth.body[tempMeth.body.length-1] === '\r') tempMeth.body = tempMeth.body.substring(0, tempMeth.body.length-1);
         // ------------------------------------------------------------------------------------------------------
+        tempMeth.modified = false;
         window.methodList.push(tempMeth);
         addFictionList(tempMeth)
     }

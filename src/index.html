@@ -162,7 +162,7 @@
 			padding: 0px 10px;
 		}
 
-		li.fiction-item.active.modified:after {
+		li.fiction-item.modified:after {
 			position: absolute;
 			content: ' ';
 			width: 15px;
@@ -274,6 +274,8 @@
 
 		document.querySelector('#editor').oninput = () => {
 			document.querySelector('.fiction-item.active').classList.add("modified");
+			let id = document.querySelector('.fiction-item.active').getAttribute('fiction-id');
+			window.methodsObject.methodList[id].modified = true;
 		}
 	</script>
 </body>
