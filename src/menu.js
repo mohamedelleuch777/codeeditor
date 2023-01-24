@@ -29,7 +29,8 @@ const template = [
     {
       label: 'File',
       submenu: [
-        { role: 'user_refresh', label: "Refresh", click: (e) => handleMenuActions(e), accelerator: isMac ? 'Alt+Cmd+R' : 'Alt+Ctrl+R'  },
+        { role: 'user_refresh', label: "Reload", click: (e) => handleMenuActions(e), accelerator: isMac ? 'Alt+Cmd+R' : 'Alt+Ctrl+R'  },
+        { role: 'user_safe_refresh', label: "Safe Reload", click: (e) => handleMenuActions(e), accelerator: isMac ? 'Alt+Cmd+T' : 'Alt+Ctrl+T'  },
         { type: 'separator' },
         { role: 'user_save', label: "Save", click: (e) => handleMenuActions(e), accelerator: isMac ? 'Cmd+S' : 'Ctrl+S' },
         { type: 'separator' },
@@ -156,8 +157,11 @@ function handleMenuActions(evt) {
       case "Save":
           mainWindow.webContents.send('save');
       break;
-      case "Refresh":
+      case "Reload":
           mainWindow.webContents.send('refresh');
+      break;
+      case "Safe Reload":
+          mainWindow.webContents.send('safe_refresh');
       break;
       case "Create":
           mainWindow.webContents.send('create');

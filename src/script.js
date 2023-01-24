@@ -135,11 +135,11 @@ function removeLastInstance(mainStr, badtext) {
 function addFictionList(methObj) {
     let ul = document.getElementById("fiction-list");
     let ulHtml = ul.innerHTML;
-    ulHtml += `\n\t\t<li class="fiction-item ${methObj.isAsync?"async":"sync"} ${methObj.testMode?"test":""}" fiction-id=${methObj.id} onclick="handleItemSelection(event)">${methObj.name}</li>`;
+    ulHtml += `\n\t\t<li class="fiction-item ${methObj.isAsync?"async":"sync"} ${methObj.modified?"modified":""} ${methObj.testMode?"test":""}" fiction-id=${methObj.id} onclick="handleItemSelection(event)">${methObj.name}</li>`;
     ul.innerHTML = ulHtml;
 }
 
-function Compile(sourceCode,className) {
+function Compile(sourceCode, className, safe) {
     window.methodsObject = {};
     methodId = 0;
     methodsObject.name = className;
@@ -168,7 +168,17 @@ function Compile(sourceCode,className) {
         if(tempMeth.body[tempMeth.body.length-1] === '\n' || tempMeth.body[tempMeth.body.length-1] === '\r') tempMeth.body = tempMeth.body.substring(0, tempMeth.body.length-1);
         // ------------------------------------------------------------------------------------------------------
         tempMeth.modified = false;
-        window.methodList.push(tempMeth);
+        if(!safe) {
+            window.methodList.push(tempMeth);
+        } else {
+            if(window.methodsObjectSaved.methodList[window.methodList.length].modified) {
+                tempMeth = window.methodsObjectSaved.methodList[window.methodList.length];
+                tempMeth.modified = true;
+                window.methodList.push(tempMeth);
+            } else {
+                window.methodList.push(tempMeth);
+            }
+        }
         addFictionList(tempMeth)
     }
     window.methodsObject.methodList = methodList;
@@ -366,7 +376,7 @@ window.scriptLibFunctions = new ScriptLibFunctions();
     })
 }
 
-async function selectFile() {
+async function selectFile(safe=false) {
     // empty fiction list
     let fictionList = document.getElementById('fiction-list');
     fictionList.innerHTML = '';
@@ -380,13 +390,18 @@ async function selectFile() {
     let file = settings.path;
     fs.readFile(file, "utf8",function(error, data){
         startPosition = data.indexOf("class " + settings.class + " {");
-        Compile(data,settings.class);
+        Compile(data,settings.class,safe);
         if(typeof openedMethodId !== 'undefined') {
             let code = methodsObject.methodList[openedMethodId].body;
             setlectLineList(openedMethodId)
             loadCodeInEditor(document.getElementById('editor'), code);
         }
-        Log("OPEN: "+file);
+        window.methodsObjectSaved = window.methodsObject;
+        if(safe) {
+            Log("SAFE OPEN: "+file);
+        } else {
+            Log("OPEN: "+file);
+        }
     });
 }
 
@@ -394,6 +409,13 @@ function scriptLibRefreshFromFile() {
     selectFile();
     setTimeout(() => {
         selectFile();
+    }, 300);
+}
+
+function scriptLibSafeReloadFromFile() {
+    selectFile(true);
+    setTimeout(() => {
+        selectFile(true);
     }, 300);
 }
 
@@ -809,6 +831,7 @@ const { ipcRenderer } = require('electron');
 
 ipcRenderer.on('save', (evt, msg) => createOutputFile());
 ipcRenderer.on('refresh', (evt, msg) => scriptLibRefreshFromFile());
+ipcRenderer.on('safe_refresh', (evt, msg) => scriptLibSafeReloadFromFile());
 ipcRenderer.on('create', (evt, msg) => createMethod());
 ipcRenderer.on('remove', (evt, msg) => removeMethod());
 ipcRenderer.on('rename', (evt, msg) => renameMethod());
