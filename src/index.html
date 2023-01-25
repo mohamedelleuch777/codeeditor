@@ -10,7 +10,11 @@
 	<script type="text/javascript" src="lib/jquery.js"></script>
 	<script type="text/javascript" src="lib/codemirror.js" ></script>
 	<script defer type="text/javascript" src="script.js" ></script>
+	<script defer type="text/javascript" src="terminal.js" ></script>
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Gugi&display=swap" rel="stylesheet">
 	<style>
 		body {
 			margin: 0;
@@ -20,13 +24,14 @@
 			position: relative;
 			width: 100vw;
 			height: 90vh;
+			/* height: calc(90vh - 20px); */
 		}
 		
 		#editor {
 			position: absolute;
 			left: 350px;
 			width: calc(100% - 350px);
-			height: 100%;
+			height: calc(100% - 20px);
 			display: flex;
 		}
 		
@@ -126,6 +131,7 @@
 			background-color: #dc3741 !important;
 		}
 		#logList {
+			position: relative;
 			overflow-y: scroll;
 			height: calc(10vh - 2px);
 			border-top: solid 2px #ccc;
@@ -133,6 +139,7 @@
 			list-style: none;
     		padding: 0px;
 			background-color: #ccc;
+			/* margin-top: 20px; */
 		}
 		#logList li {
 			border-top: solid 1px;
@@ -147,7 +154,7 @@
 			border-right: solid 1px;
 			border-left: solid 1px;
 			margin-right: 40px;
-			padding: 0 25px;
+			padding: 0 95px;
 		}
 		.btn-sync {
 			background-color: #0f4ccf !important;
@@ -172,6 +179,19 @@
 			top: 50%;
 			transform: translateY(-50%);
 			background: radial-gradient(circle at bottom, #81e8f6, #76deef 10%, #055194 80%, #062745 100%);
+		}
+		input.terminal {
+			position: fixed;
+			z-index: 1;
+			width: calc(100% - 360px);
+			bottom: 99px;
+			left: 352px;
+			border: 2px solid;
+			border-bottom: none;
+			background-color: #000;
+			outline: none;
+			color: #fff;
+			font-family: 'Gugi', cursive;
 		}
 	</style>
 	<script type="text/javascript">
@@ -202,6 +222,7 @@
 		<a class="dropdown-item" onclick="selectContextMenuItem(event)" href="#">Menu Not Ready Yet</a>
 		<a class="dropdown-item" onclick="selectContextMenuItem(event)" href="#">Menu Not Ready Yet</a>
     </div>
+	<input class="terminal" placeholder="Write a terminal command here" >
 	<ul id="logList"></ul>
 <script>
 	'use strict';
