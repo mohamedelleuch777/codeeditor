@@ -752,8 +752,10 @@ const gitPullCode = async () => {
         let result = await Swal.fire({
             title: 'Do you want reload after pull?',
             showDenyButton: true,
-            confirmButtonText: 'Yes',
-            denyButtonText: 'No',
+            showCancelButton: true,
+            confirmButtonText: 'Releoad',
+            denyButtonText: 'Safe Reload',
+            cancelButtonText: 'No',
             customClass: {
               actions: 'my-actions',
               confirmButton: 'order-2',
@@ -762,6 +764,9 @@ const gitPullCode = async () => {
         })
         if (result.isConfirmed) {
             scriptLibRefreshFromFile();
+        }
+        if (result.isDenied) {
+            scriptLibSafeReloadFromFile();
         }
     }
     popupAutoClose("",1)
