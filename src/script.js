@@ -740,6 +740,16 @@ async function gitPushCode() {
 const gitPullCode = async () => {
     popupAutoClose("Pulling The Code with GIT");
     Log("Pulling The Code with GIT");
+    if(!await GIT_Status()) {
+        Swal.fire({
+            title: 'Error!',
+            text: 'You have to commit your current changes to be able to pull the remote code',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        })
+        Log("You have to commit your current changes to be able to pull the remote code");
+        return;
+    }
     let re = await GIT_Pull();
     const regex_ok = /Already up to date\./gm;
     const regex_aborted = /Please commit your changes or stash them before you merge\.\nAborting/gm;
