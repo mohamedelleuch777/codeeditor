@@ -106,6 +106,14 @@ const template = [
       ]
     },
     {
+      label: "Deploy",
+      submenu: [
+        { label: "Deploy to server", click: (e) => handleMenuActions(e) },
+        { type: 'separator' },
+        { label: "Settings", click: (e) => handleMenuActions(e) },
+      ]
+    },
+    {
       label: 'Window',
       submenu: [
         { role: 'minimize' },
@@ -192,6 +200,9 @@ function handleMenuActions(evt) {
       break;
       case "Pull Code":
           mainWindow.webContents.send('git_pull');
+      break;
+      case "Deploy to server":
+          mainWindow.webContents.send('deploy_to_server');
       break;
       case "About":
         mainWindow.webContents.send('about_codeeditor');

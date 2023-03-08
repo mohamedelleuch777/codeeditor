@@ -17,12 +17,13 @@ const runCommand = async () => {
     let cmd = commandLine.value;
     commandLine.value = '';
     console.log(cmd);
-    Log(cmd);
+    Log("<b>$Terminal&#9654; </b><i style=\"color:#c42;font-weight:bold;\">"+cmd+"</i>", "#53e549");
     let response = await ShellExecute(cmd);
     console.log(response.success);
     let lineList = response.message.replaceAll('\r','').split('\n');
     lineList.forEach(element => {
-        Log(element);
+        if(element!="")
+            Log(element, "#ffedc0");
     });
     setTimeout(() => {
         commandLine.focus();

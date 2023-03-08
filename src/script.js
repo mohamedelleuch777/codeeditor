@@ -6,6 +6,7 @@ let data = fs.readFileSync('data.json');
 let settings = JSON.parse(data);
 const { serverGetFunc, Log } = require('../server');
 const { GIT_Status, GIT_Add, GIT_Commit, GIT_Push, GIT_Pull } = require('../git_operations');
+const { ipcRenderer } = require('electron');
 
 
 TEST_MODE_COLOR                 = settings.testModeColor;
@@ -692,7 +693,7 @@ async function gitPushCode() {
     }
     await GIT_Add()
     let result = await Swal.fire({
-        title: "Rename!",
+        title: "Commit!",
         text: "Write message to the commit here:",
         input: 'text',
         showCancelButton: true,
@@ -841,8 +842,11 @@ const collectModifiedBlocks = () => {
     }
 }
 
+const deploy = () => {
+    const { exec } = require("child_process")
+    exec(settings.deployer)
+}
 
-const { ipcRenderer } = require('electron');
 
 ipcRenderer.on('save', (evt, msg) => createOutputFile());
 ipcRenderer.on('refresh', (evt, msg) => scriptLibRefreshFromFile());
@@ -857,5 +861,6 @@ ipcRenderer.on('stop_dev_server', (evt, msg) => stopDevServer());
 ipcRenderer.on('git_push', (evt, msg) => gitPushCode());
 ipcRenderer.on('git_pull', (evt, msg) => gitPullCode());
 ipcRenderer.on('about_codeeditor', (evt, msg) => aboutMe());
+ipcRenderer.on('deploy_to_server', (evt, msg) => deploy());
 
 

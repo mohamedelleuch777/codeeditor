@@ -83,7 +83,7 @@ function checkFileExists(file) {
              .catch(() => false)
 }
 
-function Log(log){
+function Log(log, backgroundColor="#ccc"){
     // We go through all items and change the value of the id attribute to empty
     let items = document.querySelectorAll('#logList li');
     for(let i=0; i<items.length; i++){
@@ -96,6 +96,7 @@ function Log(log){
     let newLi = document.createElement('li');
     newLi.setAttribute("id","last");
     newLi.innerHTML = "<strong>"+date+"</strong>" + log;
+    newLi.style.background = backgroundColor
     document.querySelector('#logList').appendChild(newLi);
 
     // Currently there is only one identifier called "last"
