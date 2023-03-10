@@ -28,10 +28,10 @@
 		}
 		
 		#editor {
-			position: absolute;
+			position: relative;
 			left: 350px;
 			width: calc(100% - 350px);
-			height: calc(100% - 20px);
+			height: calc(100% - 25px);
 			display: flex;
 		}
 		
@@ -184,11 +184,11 @@
 			background: radial-gradient(circle at bottom, #81e8f6, #76deef 10%, #055194 80%, #062745 100%);
 		}
 		input.terminal {
-			position: fixed;
+			position: relative;
 			z-index: 1;
-			width: calc(100% - 360px);
-			bottom: 99px;
-			left: 352px;
+			width: calc(100% - 358px);
+			/* bottom: 99px; */
+			left: 350px;
 			border: 2px solid;
 			border-bottom: none;
 			background-color: #000;
@@ -220,13 +220,13 @@
 			</ul>
 		</div>
 		<div id="editor"></div>
+		<input class="terminal" placeholder="Write a terminal command here" >
 	</div>
 	<div class="dropdown-menu dropdown-menu-sm" id="context-menu">
 		<a class="dropdown-item" onclick="selectContextMenuItem(event)" href="#">Menu Not Ready Yet</a>
 		<a class="dropdown-item" onclick="selectContextMenuItem(event)" href="#">Menu Not Ready Yet</a>
 		<a class="dropdown-item" onclick="selectContextMenuItem(event)" href="#">Menu Not Ready Yet</a>
     </div>
-	<input class="terminal" placeholder="Write a terminal command here" >
 	<ul id="logList"></ul>
 <script>
 	'use strict';
