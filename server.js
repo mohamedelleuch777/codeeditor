@@ -48,6 +48,7 @@ const serverGetFunc = async (req, res) => {
             break;
     }
 
+    /*
     fs.readFile(sl_directory + filePath, async function(error, content) {
         if (error) {
             if(error.code == 'ENOENT'){
@@ -55,7 +56,7 @@ const serverGetFunc = async (req, res) => {
                     let newFilePath = sl_directory + "\\" + directoryList[i]+filePath;
                     let fileExistance = await checkFileExists(newFilePath);
                     if(fileExistance) {
-                        const newFileContent = fs.readFileSync(newFilePath);
+                        const newFileContent = await fs.readFileSync(newFilePath);
                         res.writeHead(200, { 'Content-Type': contentType });
                         res.end(newFileContent, 'utf-8');
                         return;
@@ -75,6 +76,34 @@ const serverGetFunc = async (req, res) => {
             res.end(content, 'utf-8');
         }
     });
+    */
+   
+    try {
+        let content = fs.readFileSync(sl_directory + filePath);
+        res.writeHead(200, { 'Content-Type': contentType });
+        res.end(content, 'utf-8');
+    } catch (error) {
+        if(error.code == 'ENOENT'){
+            for(let i=0; i<directoryList.length; i++) {
+                let newFilePath = sl_directory + "\\" + directoryList[i]+filePath;
+                let fileExistance = await checkFileExists(newFilePath);
+                if(fileExistance) {
+                    const newFileContent = await fs.readFileSync(newFilePath);
+                    res.writeHead(200, { 'Content-Type': contentType });
+                    res.end(newFileContent, 'utf-8');
+                    return;
+                }
+            }
+            res.writeHead(404, { 'Content-Type': "text/html" });
+            res.end("<h1>Page not found 404!!</h1>", 'utf-8');
+        }
+        else {
+            res.writeHead(500);
+            res.end('Sorry, check with the site admin for error: '+error.code+' ..\n');
+            res.end();
+        }
+    }
+    
 }
 
 function checkFileExists(file) {
