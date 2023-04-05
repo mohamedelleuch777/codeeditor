@@ -1,8 +1,197 @@
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
-      Arial, sans-serif;
-    margin: auto;
-    max-width: 38rem;
-    padding: 2rem;
+
+  body {
+    margin: 0;
   }
   
+  #main-container {
+    position: relative;
+    width: 100vw;
+    height: 90vh;
+    /* height: calc(90vh - 20px); */
+  }
+  
+  #editor {
+    position: relative;
+    left: 350px;
+    width: calc(100% - 350px);
+    height: calc(100% - 25px);
+    display: flex;
+  }
+  
+  .ͼ1.cm-editor, .ͼ15.cm-editor {
+    width: 100%;
+  }
+  
+  #left-side {
+    position: absolute;
+    margin: 0;
+    padding: 10px;
+    width: 330px;
+    height: calc(100% - 20px);
+    flex: 1;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 4px 0px #ccc;
+  }
+
+  #fiction-list {
+    flex: 1;
+    padding: 0;
+    overflow: auto;
+    margin: 0;
+    margin-top: 10px;
+  }
+  .fiction-item {
+    position: relative;
+    height: 30px;
+    line-height: 30px;
+    padding: 5px 5px 5px 40px;
+    cursor: pointer;
+    border-bottom: solid 1px #fff;
+      color: #111;
+    background-color: #f5f5f5;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    border-radius: 4px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 260px;
+  }
+  li.fiction-item.async:before {
+      content: 'A';
+      position: absolute;
+      left: 18px;
+      border: solid 1px #ff2323;
+      width: 24px;
+      height: 24px;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 4px;
+      line-height: 24px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 12px;
+      color: #fff;
+      background-color: #ff2323;
+  }
+  li.fiction-item.sync:before {
+      content: 'S';
+      position: absolute;
+      left: 18px;
+      border: solid 1px #286af8;
+      width: 24px;
+      height: 24px;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 4px;
+      line-height: 24px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 14px;
+      color: #fff;
+      background-color: #286af8;
+  }
+  li.fiction-item.test {
+    background-color: #129635;
+    color: #fff;
+  }
+  li.fiction-item.test.active {
+    background-color: #0a750a;
+    color: #fff;
+    font-weight: bold;
+  }
+  li.fiction-item.active {
+    background-color: #d4d4d4;
+    color: #000;
+    font-weight: bold;
+  }
+  #context-menu {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      background-color: #fff;
+      top: 500px;
+      left: 500px;
+      padding: 5px 7px;
+      border: solid 1px #ccc;
+      display: none;
+  }
+  #context-menu a {
+      height: 25px;
+      align-items: center;
+  }
+  .success {
+    background-color: #37dc62 !important;
+  }
+  .error {
+    background-color: #dc3741 !important;
+  }
+  #logList {
+    position: relative;
+    overflow-y: scroll;
+    height: calc(10vh - 2px);
+    border-top: solid 2px #ccc;
+    margin: 0;
+    list-style: none;
+      padding: 0px;
+    background-color: #ccc;
+    /* margin-top: 20px; */
+  }
+  #logList li {
+    border-top: solid 1px;
+    font-family:'Courier New', Courier, monospace !important;
+  }
+  #logList li:last-child {
+    border-bottom: solid 1px;
+  }
+  #logList li:hover {
+    background-color: #99c9fbd4;
+  }
+  #logList li strong {
+    border-right: solid 1px;
+    border-left: solid 1px;
+    margin-right: 40px;
+    padding: 0 95px;
+  }
+  .btn-sync {
+    background-color: #0f4ccf !important;
+  }
+  .btn-async {
+    background-color: #df0000 !important;
+  }
+
+  #searchInput {
+    border: #bbb solid 1px;
+    border-radius: 4px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    padding: 10px;
+  }
+
+  li.fiction-item.modified:after {
+    position: absolute;
+    content: ' ';
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: radial-gradient(circle at bottom, #81e8f6, #76deef 10%, #055194 80%, #062745 100%);
+  }
+  input.terminal {
+    position: relative;
+    z-index: 1;
+    width: calc(100% - 358px);
+    /* bottom: 99px; */
+    left: 350px;
+    border: 2px solid;
+    border-bottom: none;
+    background-color: #000;
+    outline: none;
+    color: #fff;
+    font-family: 'Gugi', cursive;
+    height: 22px;
+  }
