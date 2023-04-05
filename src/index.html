@@ -15,6 +15,9 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Gugi&display=swap" rel="stylesheet">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 	<style>
 		body {
 			margin: 0;
@@ -64,52 +67,64 @@
 			position: relative;
 			height: 30px;
 			line-height: 30px;
-			padding-left: 30px;
+			padding: 5px 5px 5px 40px;
 			cursor: pointer;
-			border: solid 1px #ccc;
-		    color: #fff;
-			background-color: #ffb395;
+			border-bottom: solid 1px #fff;
+		    color: #111;
+			background-color: #f5f5f5;
+			font-family: 'Poppins', sans-serif;
+			font-size: 14px;
+			border-radius: 4px;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			width: 260px;
 		}
 		li.fiction-item.async:before {
 		    content: 'A';
 		    position: absolute;
-		    left: 13px;
-		    border: solid 1px #df0000;
-		    width: 20px;
-		    height: 20px;
+		    left: 18px;
+		    border: solid 1px #ff2323;
+		    width: 24px;
+		    height: 24px;
 		    top: 50%;
 		    transform: translate(-50%, -50%);
-		    border-radius: 50%;
-		    line-height: 22px;
+		    border-radius: 4px;
+		    line-height: 24px;
 		    text-align: center;
-		    font-weight: bold;
-		    font-size: 14px;
+		    font-weight: 600;
+		    font-size: 12px;
 		    color: #fff;
-		    background-color: #df0000;
+		    background-color: #ff2323;
 		}
 		li.fiction-item.sync:before {
 		    content: 'S';
 		    position: absolute;
-		    left: 13px;
-		    border: solid 1px #0f4ccf;
-		    width: 20px;
-		    height: 20px;
+		    left: 18px;
+		    border: solid 1px #286af8;
+		    width: 24px;
+		    height: 24px;
 		    top: 50%;
 		    transform: translate(-50%, -50%);
-		    border-radius: 50%;
-		    line-height: 22px;
+		    border-radius: 4px;
+		    line-height: 24px;
 		    text-align: center;
-		    font-weight: bold;
+		    font-weight: 600;
 		    font-size: 14px;
 		    color: #fff;
-		    background-color: #0f4ccf;
+		    background-color: #286af8;
 		}
 		li.fiction-item.test {
-			background-color: #37dc62;
+			background-color: #129635;
+			color: #fff;
+		}
+		li.fiction-item.test.active {
+			background-color: #0a750a;
+			color: #fff;
+			font-weight: bold;
 		}
 		li.fiction-item.active {
-			background-color: blueviolet;
-			color: #fff;
+			background-color: #d4d4d4;
+			color: #000;
 			font-weight: bold;
 		}
 		#context-menu {
@@ -146,6 +161,7 @@
 		}
 		#logList li {
 			border-top: solid 1px;
+			font-family:'Courier New', Courier, monospace !important;
 		}
 		#logList li:last-child {
 			border-bottom: solid 1px;
@@ -167,9 +183,11 @@
 		}
 
 		#searchInput {
-			font-family: Arial, FontAwesome;
-			font-size: 30px;
-			padding: 0px 10px;
+			border: #bbb solid 1px;
+			border-radius: 4px;
+			font-family: 'Poppins', sans-serif;
+			font-size: 18px;
+			padding: 10px;
 		}
 
 		li.fiction-item.modified:after {
