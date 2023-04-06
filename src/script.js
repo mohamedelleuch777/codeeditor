@@ -5,8 +5,9 @@ const path = require('path');
 let data = fs.readFileSync('data.json');
 let settings = JSON.parse(data);
 const { serverGetFunc, Log } = require('../server');
-const { GIT_Status, GIT_Add, GIT_Commit, GIT_Push, GIT_Pull } = require('../git_operations');
+const { GIT_Status, GIT_Add, GIT_Commit, GIT_Push, GIT_Pull, GIT_ListCommits } = require('./git_operations');
 const { ipcRenderer } = require('electron');
+const { writeSetting, readSetting, generateCommitLogComponent, updateLogParams } = require('./helpers');
 
 
 TEST_MODE_COLOR                 = settings.testModeColor;
@@ -243,7 +244,7 @@ const selectFictionFromList = (evt) => {
     let fictionId = evt.target.getAttribute('fiction-id');
     window.openedMethodId = fictionId;
     let code = methodsObject.methodList[fictionId].body;
-    loadCodeInEditor(document.getElementById('editor'), code);
+    loadCodeInEditor(document.querySelector('.CodeMirror'), code);
     if(methodsObject.methodList[fictionId].testMode) {
         setEditorBackgroundColor(TEST_MODE_COLOR)
     } else {
@@ -382,7 +383,7 @@ async function selectFile(safe=false) {
     let fictionList = document.getElementById('fiction-list');
     fictionList.innerHTML = '';
     // empty edior
-    let editor = document.getElementById('editor');
+    let editor = document.querySelector('.CodeMirror');
     editor.innerHTML = '';
 
 
@@ -395,7 +396,7 @@ async function selectFile(safe=false) {
         if(typeof openedMethodId !== 'undefined') {
             let code = methodsObject.methodList[openedMethodId].body;
             setlectLineList(openedMethodId)
-            loadCodeInEditor(document.getElementById('editor'), code);
+            loadCodeInEditor(document.querySelector('.CodeMirror'), code);
         }
         window.methodsObjectSaved = window.methodsObject;
         if(safe) {
@@ -650,6 +651,7 @@ function generateTestLink () {
 
 
 const express = require('express');
+const { off } = require('process');
 const port = 6695;
 const app = express();
 let serverInstance;
@@ -783,6 +785,23 @@ const gitPullCode = async () => {
     popupAutoClose("",1)
 }
 
+const gitLogCommits = async () => {
+    let 
+        limit = readSetting("logLimit"),
+        offset = readSetting("logOffset");
+    if(!limit || !offset) {
+        await updateLogParams();
+        limit = readSetting("logLimit"),
+        offset = readSetting("logOffset");
+    }
+    let result = await generateCommitLogComponent(limit,offset);
+    console.log(result);
+}
+
+const gitLogCommitsUpdateSearchParams = async () => {
+    updateLogParams();
+}
+
 const aboutMe = () => {
     /**
     Preparing html and css data in variables and constants 
@@ -858,8 +877,11 @@ ipcRenderer.on('set_test_mode', (evt, msg) => setTestMode());
 ipcRenderer.on('generate_test_link', (evt, msg) => generateTestLink());
 ipcRenderer.on('start_dev_server', (evt, msg) => startDevServer());
 ipcRenderer.on('stop_dev_server', (evt, msg) => stopDevServer());
+ipcRenderer.on('git_commit', (evt, msg) => gitCommitCode());
 ipcRenderer.on('git_push', (evt, msg) => gitPushCode());
 ipcRenderer.on('git_pull', (evt, msg) => gitPullCode());
+ipcRenderer.on('git_log', (evt, msg) => gitLogCommits());
+ipcRenderer.on('git_log_update_params', (evt, msg) => gitLogCommitsUpdateSearchParams());
 ipcRenderer.on('about_codeeditor', (evt, msg) => aboutMe());
 ipcRenderer.on('deploy_to_server', (evt, msg) => deploy());
 

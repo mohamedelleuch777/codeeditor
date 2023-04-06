@@ -10,11 +10,11 @@
     /* height: calc(90vh - 20px); */
   }
   
-  #editor {
+ .CodeMirror {
     position: relative;
     left: 350px;
-    width: calc(100% - 350px);
-    height: calc(100% - 25px);
+    width: calc(100% - 350px) !important;
+    height: calc(100% - 25px) !important;
     display: flex;
   }
   

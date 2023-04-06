@@ -101,8 +101,12 @@ const template = [
     {
       label: "GIT Operations",
       submenu: [
+        { label: "Commit Code", click: (e) => handleMenuActions(e) },
         { label: "Push Code", click: (e) => handleMenuActions(e) },
         { label: "Pull Code", click: (e) => handleMenuActions(e) },
+        { type: 'separator' },
+        { label: "Refresh Commit List", click: (e) => handleMenuActions(e) },
+        { label: "Update Log Seach Param", click: (e) => handleMenuActions(e) },
       ]
     },
     {
@@ -192,14 +196,20 @@ function handleMenuActions(evt) {
       case "Stop Development Server (DTS)":
           mainWindow.webContents.send('stop_dev_server');
       break;
-      case "Push Code":
-          mainWindow.webContents.send('git_push');
+      case "Commit Code":
+          mainWindow.webContents.send('git_commit');
       break;
       case "Push Code":
           mainWindow.webContents.send('git_push');
       break;
       case "Pull Code":
           mainWindow.webContents.send('git_pull');
+      break;
+      case "Refresh Commit List":
+          mainWindow.webContents.send('git_log');
+      break;
+      case "Update Log Seach Param":
+          mainWindow.webContents.send('git_log_update_params');
       break;
       case "Deploy to server":
           mainWindow.webContents.send('deploy_to_server');

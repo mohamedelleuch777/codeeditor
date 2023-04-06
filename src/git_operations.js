@@ -1,4 +1,4 @@
-const { ShellExecute } = require("./src/shell");
+const { ShellExecute, ShellExecute2 } = require("./shell");
 
 async function GIT_Status() {
     // nothing to commit, working tree clean
@@ -26,12 +26,28 @@ async function GIT_Pull() {
     return await ShellExecute(`git pull`);
 }
 
+async function GIT_ListCommits(limit, offset=0) {
+    
+
+    const cmd = `git log --date=format-local:\"%Y-%m-%d %H:%M:%S\" --skip=${offset} -${limit} --pretty=\"format;%h;%ad;%an;%s\"`;
+
+    try {
+        return await ShellExecute2(cmd);
+    }
+    catch (err) {
+        console.log(err);
+        return err;
+    };
+    // return await ShellExecute(`git log --date=format-local:"%Y-%m-%d %H:%M:%S" --skip=${offset}  -${limit} --pretty="{ %x0A'id': '%h',%x0A 'date': '%ad', %x0A 'author': '%an', %x0A 'commit': '%s' %x0A}, %x09"`);
+}
+
 module.exports = {
     GIT_Status,
     GIT_Add,
     GIT_Commit,
     GIT_Push,
-    GIT_Pull
+    GIT_Pull,
+    GIT_ListCommits
 }
 /*
 async function main() {
