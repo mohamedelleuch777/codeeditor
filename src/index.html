@@ -92,7 +92,7 @@
 		function onEditorInput(e) {
 			// debugger
 			if(window.methodsObject) {
-			window.openedMethodId && (methodsObject.methodList[openedMethodId].body = view.state.doc.toString());
+			window.openedMethodId && (methodsObject.methodList[openedMethodId].body = editor.state.doc.toString());
 			}
 			window.onEditorInput = onEditorInput;
 
@@ -130,36 +130,21 @@
 <!--##############################################################################################################################################-->
 <script>
 
-	function generateTheme() {
-		const { createTheme } = CM['@uiw/codemirror-themes'];
-		const myTheme = createTheme({
-		theme: 'light',
-		settings: {
-			background: '#ffffff',
-			foreground: '#75baff',
-			caret: '#5d00ff',
-			selection: '#036dd626',
-			selectionMatch: '#036dd626',
-			lineHighlight: '#8a91991a',
-			gutterBackground: '#fff',
-			gutterForeground: '#8a919966',
-		},
-		styles: [
-			{ tag: t.comment, color: '#787b8099' },
-			{ tag: t.variableName, color: '#0080ff' },
-			{ tag: [t.string, t.special(t.brace)], color: '#5c6166' },
-			{ tag: t.number, color: '#5c6166' },
-			{ tag: t.bool, color: '#5c6166' },
-			{ tag: t.null, color: '#5c6166' },
-			{ tag: t.keyword, color: '#5c6166' },
-			{ tag: t.operator, color: '#5c6166' },
-			{ tag: t.className, color: '#5c6166' },
-			{ tag: t.definition(t.typeName), color: '#5c6166' },
-			{ tag: t.typeName, color: '#5c6166' },
-			{ tag: t.angleBracket, color: '#5c6166' },
-			{ tag: t.tagName, color: '#5c6166' },
-			{ tag: t.attributeName, color: '#5c6166' },
-		],
+	function createEditor(theme=[]) {
+		document.querySelector('.CodeMirror').innerHTML = ''
+		window.editor = new EditorView({
+			doc: window.sourceCode || '',
+			extensions: [
+				EditorView.updateListener.of(onEditorInput),
+				basicSetup, 
+				javascript(), 
+				javascriptLanguage.data.of({
+					autocomplete: jsCompletion,
+				}),
+				theme,
+				keymap.of([indentWithTab])
+			],
+			parent: document.querySelector('.CodeMirror')
 		});
 	}
 
@@ -170,48 +155,23 @@
 
 <script>
 	'use strict';
-    const {
-		basicSetup,
-		/* EditorView */
-		
-	} = CM["codemirror"];
-    const {
-		EditorView,
-		keymap
-	} = CM["@codemirror/view"];
-    const {
-		indentWithTab
-	} = CM["@codemirror/commands"];
-	const {
-		javascript,
-		javascriptLanguage
-	} = CM["@codemirror/lang-javascript"];
-	const {
-		completeFromList
-	} = CM["@codemirror/autocomplete"];
+    const { basicSetup } = CM["codemirror"];
+    const { Extension } = CM["@codemirror/state"];
+    const { EditorView, keymap } = CM["@codemirror/view"];
+    const { indentWithTab } = CM["@codemirror/commands"];
+	const { javascript, javascriptLanguage } = CM["@codemirror/lang-javascript"];
+	const { completeFromList } = CM["@codemirror/autocomplete"];
+
 	let jsCompletion = completeFromList(Object.getOwnPropertyNames(window).map(p => {
 		return {
 			label: p,
 			type: /^[A-Z]/.test(p) ? "class" : typeof window[p] == "function" ? "function" : "variable"
 		};
 	}));
+	const { oneDark, oneDarkHighlightStyle, oneDarkTheme } = CM['@codemirror/theme-one-dark'];
 	
 	// generateTheme();
-	const { oneDark, oneDarkHighlightStyle, oneDarkTheme } = CM['@codemirror/theme-one-dark'];
-	window.view = new EditorView({
-		doc: window.sourceCode || '',
-		extensions: [
-			EditorView.updateListener.of(onEditorInput),
-			basicSetup, 
-			oneDark,
-			javascript(), 
-			javascriptLanguage.data.of({
-				autocomplete: jsCompletion,
-			}),
-			keymap.of([indentWithTab])
-		],
-		parent: document.querySelector('.CodeMirror')
-	});
+	createEditor();
 	
 	</script>
 	<script type="text/javascript">

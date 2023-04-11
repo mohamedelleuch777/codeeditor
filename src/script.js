@@ -371,20 +371,20 @@ window.scriptLibFunctions = new ScriptLibFunctions();
 }
 
 function clearEditor() {
-    window.view.dispatch({
+    window.editor.dispatch({
         changes: {
             from: 0,
-            to: window.view.state.doc.length,
+            to: window.editor.state.doc.length,
             insert: ''
         }
     });
 }
 
 function setEditorText(txt) {
-    window.view.dispatch({
+    window.editor.dispatch({
         changes: {
             from: 0,
-            to: window.view.state.doc.length,
+            to: window.editor.state.doc.length,
             insert: txt
         }
     });
