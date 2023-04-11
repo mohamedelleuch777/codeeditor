@@ -1,0 +1,10 @@
+{
+	"path": "C:\\Users\\elleuch\\OneDrive - MediaMarktSaturn\\Desktop\\project_\\scriptLib\\script_lib.js",
+	"gitPath": "C:\\Users\\elleuch\\OneDrive - MediaMarktSaturn\\Desktop\\project_\\scriptLib\\",
+	"class": "ScriptLibFunctions",
+	"testModeColor": "#c3ffcc",
+	"prodModeColor": "#ffcec3",
+	"deployer": "\"C:\\Users\\elleuch\\OneDrive - MediaMarktSaturn\\Desktop\\project_\\c++\\FtpDeployerQt\\build-FtpDeployerQt-Desktop_Qt_5_15_2_MinGW_64_bit-Release\\release\\launcher.vbs\"",
+	"logLimit": "10000",
+	"logOffset": "0"
+}

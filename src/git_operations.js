@@ -41,13 +41,23 @@ async function GIT_ListCommits(limit, offset=0) {
     // return await ShellExecute(`git log --date=format-local:"%Y-%m-%d %H:%M:%S" --skip=${offset}  -${limit} --pretty="{ %x0A'id': '%h',%x0A 'date': '%ad', %x0A 'author': '%an', %x0A 'commit': '%s' %x0A}, %x09"`);
 }
 
+async function GIT_SetUserName(username) {
+    return await ShellExecute(`git config --global user.name "${username}"`);
+}
+
+async function GIT_GetUserName() {
+    return await ShellExecute(`git config --global user.name`);
+}
+
 module.exports = {
     GIT_Status,
     GIT_Add,
     GIT_Commit,
     GIT_Push,
     GIT_Pull,
-    GIT_ListCommits
+    GIT_ListCommits,
+    GIT_GetUserName,
+    GIT_SetUserName
 }
 /*
 async function main() {

@@ -7,7 +7,7 @@ let settings = JSON.parse(data);
 const { serverGetFunc, Log } = require('../server');
 const { GIT_Status, GIT_Add, GIT_Commit, GIT_Push, GIT_Pull, GIT_ListCommits } = require('./git_operations');
 const { ipcRenderer } = require('electron');
-const { writeSetting, readSetting, generateCommitLogComponent, updateLogParams } = require('./helpers');
+const { writeSetting, readSetting, generateCommitLogComponent, updateLogParams, CheckGitUser } = require('./helpers');
 
 
 TEST_MODE_COLOR                 = settings.testModeColor;
@@ -681,7 +681,7 @@ function generateUuidV4() {
     );
 }
 
-async function gitPushCode() {
+async function gitCommitCode() {
     Log("Commiting & Pushing The Code with GIT");
     if(await GIT_Status()) {
         Swal.fire({
@@ -715,7 +715,7 @@ async function gitPushCode() {
     }
     popupAutoClose("Commiting & Pushing The Code with GIT");
     let re = await GIT_Commit(result.value);
-    const regex = /\d* file changed, \d* insertion(s*)\(\+\), \d* deletion(s*)\(-\)/gm;
+    const regex = /\d* file[s]? changed, \d* insertion[s]?\(\+\), \d* deletion[s]?\(-\)/gm;
     if(!regex.exec(re.message)){
         Swal.fire({
             title: 'Error!',
@@ -734,13 +734,27 @@ async function gitPushCode() {
     } 
     else {
         Log("Commited as: "+result.value);
-        re = await GIT_Push();
-        Log("Pushed to remote.");
         popupAutoClose("",1)
     }
+    let newVersion = await gitLogCommits();
+    newVersion = newVersion.length;
+    let minorVersion = newVersion % 10;
+    let middleVersion = parseInt(newVersion/10)%100
+    let majorVersion = parseInt(newVersion/1000)
+    let stringVersion = `${majorVersion}.${middleVersion}.${minorVersion}`;
+    let fileContent = `window.scriptLib_version = "${stringVersion}";`
+    // settings.gitPath
+    fs.writeFileSync(settings.gitPath+"version.js", fileContent, "utf8")
+}
+
+async function gitPushCode() {
+    await CheckGitUser()
+    re = await GIT_Push();
+    Log("Pushed to remote.");
 }
 
 const gitPullCode = async () => {
+    await CheckGitUser()
     popupAutoClose("Pulling The Code with GIT");
     Log("Pulling The Code with GIT");
     if(!await GIT_Status()) {
@@ -795,7 +809,7 @@ const gitLogCommits = async () => {
         offset = readSetting("logOffset");
     }
     let result = await generateCommitLogComponent(limit,offset);
-    console.log(result);
+    return result;
 }
 
 const gitLogCommitsUpdateSearchParams = async () => {

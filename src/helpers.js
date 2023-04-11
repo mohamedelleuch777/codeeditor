@@ -1,11 +1,13 @@
 
-const settingsFile = "data.json";
+const settingsFile  = "data.json";
+var fs              = require('fs');
+const { GIT_GetUserName, GIT_SetUserName } = require('./git_operations');
 
-const writeSetting = (key, value) => {
+const writeToJsonFile = (path, key, value) => {
     // Read the file and parse its contents as JSON
     let jsonData = {};
     try {
-      const fileContents = fs.readFileSync(settingsFile, 'utf-8');
+      const fileContents = fs.readFileSync(path, 'utf-8');
       jsonData = JSON.parse(fileContents);
     } catch (error) {
       // If file doesn't exist, catch error and create an empty JSON object
@@ -18,11 +20,11 @@ const writeSetting = (key, value) => {
     fs.writeFileSync(settingsFile, JSON.stringify(jsonData, null, "\t"));
 }
 
-const readSetting = (key) => {
+const readFromJsonFile = (path, key) => {
     // Read the file and parse its contents as JSON
     let jsonData = {};
     try {
-      const fileContents = fs.readFileSync(settingsFile, 'utf-8');
+      const fileContents = fs.readFileSync(path, 'utf-8');
       jsonData = JSON.parse(fileContents);
     } catch (error) {
       // If file doesn't exist or is empty, catch error and return null
@@ -32,6 +34,14 @@ const readSetting = (key) => {
 
     // Return the value for the specified key
     return jsonData[key] || null;
+}
+
+const writeSetting = (key, value) => {
+  writeToJsonFile(settingsFile, key, value)
+}
+
+const readSetting = (key) => {
+  return readFromJsonFile(settingsFile, key)
 }
 
 const generateCommitLogComponent = async (limit,offset) => {
@@ -80,9 +90,71 @@ const updateLogParams = () => {
   }) ;
 }
 
+
+// Define the function to show the popup
+function CheckGitUser() {
+  return new Promise (async (resolve) => {
+    let usernm = readSetting("username");
+    if( usernm && usernm!="") {
+      resolve(true)
+      return;
+    }
+    usernm = await ShellExecute(`git config --global user.name`);
+    if( usernm && usernm.message!="") {
+      writeSetting("username",usernm.message.replace('\n',''))
+      resolve(true)
+      return;
+    }
+    Swal.fire({
+      title: 'Enter your Git username:',
+      input: 'text',
+      inputPlaceholder: 'Username',
+      confirmButtonText: 'Submit',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      inputValidator: (value) => {
+        // Check if the username is empty
+        if (!value) {
+          return 'Please enter your Git username';
+        }
+      }
+    }).then(async (result) => {
+      // Check if the user clicked the "Submit" button
+      if (result.isConfirmed) {
+        // Get the Git username from the input field
+        const gitUsername = result.value;
+        
+        // Do something with the Git username (e.g., log it to the console)
+        console.log('Git username:', gitUsername);
+  
+        let res = { success: true, message: ''}
+        while (!res.succes || (res.success && res.message == '')) {
+            res = await GIT_GetUserName();
+            if(!res.succes || (res.success && res.message == '')) {
+                // Call the function to show the popup
+                // await CheckGitUser();
+                res = await GIT_SetUserName(gitUsername)
+            }
+            writeSetting("username",gitUsername)
+            resolve(true);
+        }
+      } else {
+        // The user closed the popup without submitting a Git username
+        console.log('Popup closed');
+      }
+      
+      // Show the popup again if the Git username is empty
+      if (!result.value) {
+        return await CheckGitUser();
+      }
+    });
+  });
+}
+
 module.exports = {
   writeSetting,
   readSetting,
   generateCommitLogComponent,
-  updateLogParams
+  updateLogParams,
+  CheckGitUser
 }
