@@ -194,17 +194,9 @@ function Compile(sourceCode, className, safe) {
     */
 }
 
-function loadCodeInEditor(editor, code) {
-    editor.innerHTML='';
-    window.view = new EditorView({
-        doc: code,
-        extensions: [
-            EditorView.updateListener.of(window.onEditorInput),
-            basicSetup, javascript(), javascriptLanguage.data.of({
-              autocomplete: jsCompletion
-          })],
-        parent: editor
-    });
+function loadCodeInEditor( code) {
+    clearEditor();
+    setEditorText(code)
 }
 
 const handleItemSelection = (evt) => {
@@ -244,7 +236,7 @@ const selectFictionFromList = (evt) => {
     let fictionId = evt.target.getAttribute('fiction-id');
     window.openedMethodId = fictionId;
     let code = methodsObject.methodList[fictionId].body;
-    loadCodeInEditor(document.querySelector('.CodeMirror'), code);
+    loadCodeInEditor(code);
     if(methodsObject.methodList[fictionId].testMode) {
         setEditorBackgroundColor(TEST_MODE_COLOR)
     } else {
@@ -378,13 +370,33 @@ window.scriptLibFunctions = new ScriptLibFunctions();
     })
 }
 
+function clearEditor() {
+    window.view.dispatch({
+        changes: {
+            from: 0,
+            to: window.view.state.doc.length,
+            insert: ''
+        }
+    });
+}
+
+function setEditorText(txt) {
+    window.view.dispatch({
+        changes: {
+            from: 0,
+            to: window.view.state.doc.length,
+            insert: txt
+        }
+    });
+}
+
 async function selectFile(safe=false) {
     // empty fiction list
     let fictionList = document.getElementById('fiction-list');
     fictionList.innerHTML = '';
     // empty edior
     let editor = document.querySelector('.CodeMirror');
-    editor.innerHTML = '';
+    clearEditor()
 
 
     // let file = await dialogFileSelector();
@@ -396,7 +408,7 @@ async function selectFile(safe=false) {
         if(typeof openedMethodId !== 'undefined') {
             let code = methodsObject.methodList[openedMethodId].body;
             setlectLineList(openedMethodId)
-            loadCodeInEditor(document.querySelector('.CodeMirror'), code);
+            loadCodeInEditor(code);
         }
         window.methodsObjectSaved = window.methodsObject;
         if(safe) {
@@ -693,6 +705,19 @@ async function gitCommitCode() {
         Log("Nothing to commit!");
         return;
     }
+    // ######################################################################
+    // #                          Updating Version                          #
+    // ######################################################################
+    let newVersion = await gitLogCommits();
+    newVersion = newVersion.length + 1;
+    let minorVersion = newVersion % 10;
+    let middleVersion = parseInt(newVersion/10)%100
+    let majorVersion = parseInt(newVersion/1000)
+    let stringVersion = `${majorVersion}.${middleVersion}.${minorVersion}`;
+    let fileContent = `window.scriptLib_version = "${stringVersion}";`
+    // settings.gitPath
+    fs.writeFileSync(settings.gitPath+"version.js", fileContent, "utf8")
+    // ######################################################################
     await GIT_Add()
     let result = await Swal.fire({
         title: "Commit!",
@@ -736,15 +761,6 @@ async function gitCommitCode() {
         Log("Commited as: "+result.value);
         popupAutoClose("",1)
     }
-    let newVersion = await gitLogCommits();
-    newVersion = newVersion.length;
-    let minorVersion = newVersion % 10;
-    let middleVersion = parseInt(newVersion/10)%100
-    let majorVersion = parseInt(newVersion/1000)
-    let stringVersion = `${majorVersion}.${middleVersion}.${minorVersion}`;
-    let fileContent = `window.scriptLib_version = "${stringVersion}";`
-    // settings.gitPath
-    fs.writeFileSync(settings.gitPath+"version.js", fileContent, "utf8")
 }
 
 async function gitPushCode() {
