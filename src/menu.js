@@ -82,6 +82,15 @@ const template = [
       ]
     },
     {
+      label: "Themes",
+      submenu: [
+        { label: "Light", click: (e) => handleMenuActions(e) },
+        { label: "One dark", click: (e) => handleMenuActions(e) },
+        { label: "One dark highlight style", click: (e) => handleMenuActions(e) },
+        { label: "One dark theme", click: (e) => handleMenuActions(e) }
+      ]
+    },
+    {
       label: "Fiction",
       submenu: [
         { label: "Create", click: (e) => handleMenuActions(e) },
@@ -216,6 +225,18 @@ function handleMenuActions(evt) {
       break;
       case "About":
         mainWindow.webContents.send('about_codeeditor');
+      break;
+      case "Light":
+        mainWindow.webContents.send('theme0');
+      break;
+      case "One dark":
+        mainWindow.webContents.send('theme1');
+      break;
+      case "One dark highlight style":
+        mainWindow.webContents.send('theme2');
+      break;
+      case "One dark theme":
+        mainWindow.webContents.send('theme3');
       break;
   }
 }

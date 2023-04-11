@@ -45,7 +45,6 @@
   "dependencies": {
     "@codemirror/theme-one-dark": "^6.1.1",
     "@octokit/rest": "^19.0.4",
-    "@uiw/codemirror-themes": "^4.19.16",
     "electron-main-window": "^1.0.4",
     "electron-prebuilt-compile": "^8.2.0",
     "electron-squirrel-startup": "^1.0.0",

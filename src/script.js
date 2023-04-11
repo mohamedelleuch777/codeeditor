@@ -914,5 +914,9 @@ ipcRenderer.on('git_log', (evt, msg) => gitLogCommits());
 ipcRenderer.on('git_log_update_params', (evt, msg) => gitLogCommitsUpdateSearchParams());
 ipcRenderer.on('about_codeeditor', (evt, msg) => aboutMe());
 ipcRenderer.on('deploy_to_server', (evt, msg) => deploy());
+ipcRenderer.on('theme0', (evt, msg) => createEditor());
+ipcRenderer.on('theme1', (evt, msg) => createEditor(oneDark));
+ipcRenderer.on('theme2', (evt, msg) => createEditor(oneDarkHighlightStyle));
+ipcRenderer.on('theme3', (evt, msg) => createEditor(oneDarkTheme));
 
 
