@@ -7,7 +7,7 @@ let settings = JSON.parse(data);
 const { serverGetFunc, Log } = require('../server');
 const { GIT_Status, GIT_Add, GIT_Commit, GIT_Push, GIT_Pull, GIT_ListCommits } = require('./git_operations');
 const { ipcRenderer } = require('electron');
-const { writeSetting, readSetting, generateCommitLogComponent, updateLogParams, CheckGitUser } = require('./helpers');
+const { generateCommitLogComponent, updateLogParams, CheckGitUser } = require('./helpers');
 
 
 TEST_MODE_COLOR                 = settings.testModeColor;
@@ -914,9 +914,9 @@ ipcRenderer.on('git_log', (evt, msg) => gitLogCommits());
 ipcRenderer.on('git_log_update_params', (evt, msg) => gitLogCommitsUpdateSearchParams());
 ipcRenderer.on('about_codeeditor', (evt, msg) => aboutMe());
 ipcRenderer.on('deploy_to_server', (evt, msg) => deploy());
-ipcRenderer.on('theme0', (evt, msg) => {createEditor();scriptLibRefreshFromFile()});
-ipcRenderer.on('theme1', (evt, msg) => {createEditor(oneDark);scriptLibRefreshFromFile()});
-ipcRenderer.on('theme2', (evt, msg) => {createEditor(oneDarkHighlightStyle);scriptLibRefreshFromFile()});
-ipcRenderer.on('theme3', (evt, msg) => {createEditor(oneDarkTheme);scriptLibRefreshFromFile()});
+ipcRenderer.on('theme0', (evt, msg) => {createEditor();scriptLibRefreshFromFile();writeSetting('theme','theme0')});
+ipcRenderer.on('theme1', (evt, msg) => {createEditor(oneDark);scriptLibRefreshFromFile();writeSetting('theme','theme1')});
+ipcRenderer.on('theme2', (evt, msg) => {createEditor(oneDarkHighlightStyle);scriptLibRefreshFromFile();writeSetting('theme','theme2')});
+ipcRenderer.on('theme3', (evt, msg) => {createEditor(oneDarkTheme);scriptLibRefreshFromFile();writeSetting('theme','theme3')});
 
 

@@ -147,7 +147,15 @@
 			parent: document.querySelector('.CodeMirror')
 		});
 	}
-
+	
+	function setTheme() {
+		switch(window.theme) {
+			case "theme0": return [];
+			case "theme1": return oneDark;
+			case "theme2": return oneDarkHighlightStyle;
+			case "theme3": return oneDarkTheme;
+		}
+	}
 
 </script>
 
@@ -169,9 +177,11 @@
 		};
 	}));
 	const { oneDark, oneDarkHighlightStyle, oneDarkTheme } = CM['@codemirror/theme-one-dark'];
-	
+	const { readSetting, writeSetting } = require('./helpers');
 	// generateTheme();
-	createEditor();
+	window.theme = readSetting('theme') || "theme0";
+	let theme = setTheme();
+	createEditor(theme)
 	
 	</script>
 	<script type="text/javascript">
