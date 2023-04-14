@@ -151,10 +151,25 @@ function CheckGitUser() {
   });
 }
 
+const encodeBase64 = (data) => {
+    return Buffer.from(data).toString('base64');
+}
+
+const decodeBase64 = (data) => {
+    return Buffer.from(data, 'base64').toString('ascii');
+}
+
+function emptyDir(directory) {
+    fs.readdirSync(directory).forEach(f => fs.rmSync(`${directory}/${f}`));
+}
+
 module.exports = {
   writeSetting,
   readSetting,
   generateCommitLogComponent,
   updateLogParams,
-  CheckGitUser
+  CheckGitUser,
+  encodeBase64,
+  decodeBase64,
+  emptyDir
 }

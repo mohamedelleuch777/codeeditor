@@ -7,7 +7,9 @@ let settings = JSON.parse(data);
 const { serverGetFunc, Log } = require('../server');
 const { GIT_Status, GIT_Add, GIT_Commit, GIT_Push, GIT_Pull, GIT_ListCommits } = require('./git_operations');
 const { ipcRenderer } = require('electron');
-const { generateCommitLogComponent, updateLogParams, CheckGitUser } = require('./helpers');
+const { generateCommitLogComponent, updateLogParams, CheckGitUser,
+        encodeBase64, decodeBase64, emptyDir  
+      } = require('./helpers');
 
 
 TEST_MODE_COLOR                 = settings.testModeColor;
@@ -130,7 +132,7 @@ function addFictionList(methObj) {
     ul.innerHTML = ulHtml;
 }
 
-function Compile(sourceCode, className, safe) {
+function Compile(safe) {
     window.methodsObject = {};
     methodId = 0;
     const sourceDir = settings.gitPath+"src\\";
@@ -255,10 +257,6 @@ function removeExtraWhiteSpaceFromFunctionBody(source, whiteSpaceChar) {
 	}
 	return  res_opposite;
 }
-
-function emptyDir(directory) {
-    fs.readdirSync(directory).forEach(f => fs.rmSync(`${directory}/${f}`));
-}        
 
 async function createOutputFile() { // onSave
     var fs      = require('fs');
