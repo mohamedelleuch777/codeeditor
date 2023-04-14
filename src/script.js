@@ -255,20 +255,27 @@ function removeExtraWhiteSpaceFromFunctionBody(source, whiteSpaceChar) {
 	}
 	return  res_opposite;
 }
-        
 
-async function createOutputFile() {
+function emptyDir(directory) {
+    fs.readdirSync(directory).forEach(f => fs.rmSync(`${directory}/${f}`));
+}        
+
+async function createOutputFile() { // onSave
     var fs      = require('fs');
     let filePart1 = await fs.readFileSync("static1.js");
     let filePart2 = "class " + settings.class + " { \n\r";
     let filePart3 = /*"\r\n\r\n\r\n" +*/ await fs.readFileSync("static2.js");
-    methodsObject.methodList.forEach(element => {
+    debugger
+    emptyDir(settings.gitPath+"src\\");
+    methodsObject.methodList.forEach((element, count) => {
         filePart2 += element.isAsync ? "async " : "" ;
         filePart2 += element.name + "(" + (element.event?element.event:"") + ") {";
         filePart2 += element.testMode ? `if (!scriptLib.runThisFunctionOnlyInTestMode("${element.testMode}")) return;` :  "";
 	element.body = removeExtraWhiteSpaceFromFunctionBody(element.body, ['\n', '\r']);
         if(element.body[0]!=='\n' || element.body[0]!=='\r') filePart2+='\n';
         filePart2 += element.body;
+        const fileName = `${settings.gitPath}src\\${count},${element.isAsync ? "async" : "null"},${element.name},${element.testMode=="" ? "null" : element.testMode}.js`;
+        fs.writeFileSync(fileName,element.body);
         if(element.body[element.body.length-1]!=='\n' || element.body[element.body.length-1]!=='\r') filePart2+='\n';
         filePart2 += `
 this.methodsEndedExecutionCount++;
@@ -453,12 +460,12 @@ function createMethod() {
                     name: result.value,
                     body: "// This is the new fiction:",
                     async: false,
-                    testMode: {
-                        uuid: newUUID,
-                        value: `if (!scriptLib.runThisFunctionOnlyInTestMode("${newUUID}")) return;`
-                    }
+                    testMode: newUUID
                 }
                 methodsObject.methodList.push(newMethod);
+                const count = methodsObject.methodList.length;
+                const fileName = `${settings.gitPath}src\\${count},null,${newMethod.name},${newUUID}.js`;
+                fs.writeFileSync(fileName,"");
                 addItemToFictionList(result.value);
             }
         }
