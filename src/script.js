@@ -94,29 +94,18 @@ function getTestModeData(bodyCode) {
     return null;
 }
 
-function extractClassMethod(classCode,match) {
-    let startPosition = match.index;
-    let endDeclarationPosition = classCode.indexOf("{",startPosition);
-    let methodName = classCode.substring(startPosition,endDeclarationPosition);
-    let isAsync = methodName.includes("async");
-    let event = methodName.split('(')[1].split(')')[0] ;
-    event = event !== '' ? event : null
-    methodName = methodName.split('(')[0].replaceAll('async','').replaceAll('\t','').replaceAll('\n','').replaceAll('\r','').replaceAll(' ','');
-    let endPosition = getMethodBody(classCode,startPosition);
-    // console.log("++++++++++",endPosition);
-    let methodBody = "";
-    methodBody = classCode.substring(endDeclarationPosition+1, endPosition);
-    let tst = getTestModeData(methodBody);
-    tst && (methodBody = methodBody.replace(tst.value,''));
-    methodBody = removeLastInstance(methodBody,"\nthis.methodsEndedExecutionCount++;\n");
-    methodBody = removeLastInstance(methodBody,"\r\nthis.methodsEndedExecutionCount++;\r\n");
-    let method = {
+function extractClassMethod(file,match) {
+    let fileName = file.name.split('.')
+    fileName = fileName.slice(0,-1)
+    fileName = fileName.join('')
+    const rank = fileName.split(',')[0]
+    const methodName = fileName.split(',')[2]
+    const isAsync = fileName.split(',')[1]=="async"?true:false;
+    const tst = fileName.split(',')[3]=="null"?false:fileName.split(',')[3];
+    const method = {
         id: methodId,
-        event: event,
-        startPosition: startPosition,
-        endPosition: endPosition,
         name: methodName,
-        body: methodBody,
+        body: file.body,
         isAsync: isAsync,
         testMode: tst
     }
@@ -144,31 +133,19 @@ function addFictionList(methObj) {
 function Compile(sourceCode, className, safe) {
     window.methodsObject = {};
     methodId = 0;
-    methodsObject.name = className;
-    window.brutFile = sourceCode;
-    var ss = `^class\\s*${className}\\s*{\\s*`;
-    ss = new RegExp(ss, "gm");
-    let match = ss.exec(sourceCode)
-    let startPosition = match.index;
-    ss = new RegExp("// ###___END_OF_CLASS___###", "gm");
-    match = ss.exec(sourceCode);
-    let endPosition = match.index;
-    window.methodsObject.startPosition = startPosition;
-    window.methodsObject.endPosition = endPosition;
-    let classCode = sourceCode.substring(startPosition,endPosition+4);
-    var re = /[^\t*]\b(?!function\b).*?\b\s*\w*\s*\(\w*\)\s*\{/gm
+    const sourceDir = settings.gitPath+"src\\";
+    let fileList = fs.readdirSync(sourceDir);
     methodList = [];
-    while ((match = re.exec(classCode)) != null) {
-        let tempMeth = extractClassMethod(classCode,match);
+    fileList.forEach(( filePath ) => {
+        let funcCode = fs.readFileSync(sourceDir+filePath, 'utf-8');
         // remove parse function from code:------------------------------
-        let count = tempMeth.endPosition+1 - tempMeth.startPosition;
-        let emptySpace = " ".repeat(count);
-        classCode = classCode.substring(0,tempMeth.startPosition) + emptySpace + classCode.substring(tempMeth.endPosition+1);
-        //---------------------------------------------------------------
-        // remove return char \n and \r from the beginning and the end of the class code ------------------------
-        if(tempMeth.body[0] === '\n' || tempMeth.body[0] === '\r') tempMeth.body = tempMeth.body.substring(1);
-        if(tempMeth.body[tempMeth.body.length-1] === '\n' || tempMeth.body[tempMeth.body.length-1] === '\r') tempMeth.body = tempMeth.body.substring(0, tempMeth.body.length-1);
-        // ------------------------------------------------------------------------------------------------------
+        const reg = /[^\t*]\b(?!function\b).*?\b\s*\w*\s*\(\w*\)\s*\{/gm
+        debugger
+        const file = {
+            name: filePath,
+            body: funcCode
+        }
+        tempMeth = extractClassMethod(file,reg)
         tempMeth.modified = false;
         if(!safe) {
             window.methodList.push(tempMeth);
@@ -182,16 +159,8 @@ function Compile(sourceCode, className, safe) {
             }
         }
         addFictionList(tempMeth)
-    }
-    window.methodsObject.methodList = methodList;
-    /*
-    Swal.fire({
-        title: 'Info!',
-        text: 'The Script Lib has been loaded',
-        icon: 'success',
-        confirmButtonText: 'OK'
     })
-    */
+    window.methodsObject.methodList = methodList;
 }
 
 function loadCodeInEditor( code) {
@@ -288,17 +257,15 @@ function removeExtraWhiteSpaceFromFunctionBody(source, whiteSpaceChar) {
 }
         
 
-function createOutputFile() {
+async function createOutputFile() {
     var fs      = require('fs');
-    let mainSource = window.brutFile;
-    let filePart1 = mainSource.substring(0,methodsObject.startPosition);
-    let filePart2 = "class " + methodsObject.name + " { \n\r";
-    let filePart3 = /*"\r\n\r\n\r\n" +*/ mainSource.substring(methodsObject.endPosition);
-    filePart3 = filePart3.substring(0,filePart3.lastIndexOf("$(window).on('onWaitingForFictionsStart', () => {"));
+    let filePart1 = await fs.readFileSync("static1.js");
+    let filePart2 = "class " + settings.class + " { \n\r";
+    let filePart3 = /*"\r\n\r\n\r\n" +*/ await fs.readFileSync("static2.js");
     methodsObject.methodList.forEach(element => {
         filePart2 += element.isAsync ? "async " : "" ;
         filePart2 += element.name + "(" + (element.event?element.event:"") + ") {";
-        filePart2 += element.testMode ? element.testMode.value :  "";
+        filePart2 += element.testMode ? `if (!scriptLib.runThisFunctionOnlyInTestMode("${element.testMode}")) return;` :  "";
 	element.body = removeExtraWhiteSpaceFromFunctionBody(element.body, ['\n', '\r']);
         if(element.body[0]!=='\n' || element.body[0]!=='\r') filePart2+='\n';
         filePart2 += element.body;
@@ -399,24 +366,18 @@ async function selectFile(safe=false) {
     clearEditor()
 
 
-    // let file = await dialogFileSelector();
-    // let file = "../script_lib.js";
-    let file = settings.path;
-    fs.readFile(file, "utf8",function(error, data){
-        startPosition = data.indexOf("class " + settings.class + " {");
-        Compile(data,settings.class,safe);
-        if(typeof openedMethodId !== 'undefined') {
-            let code = methodsObject.methodList[openedMethodId].body;
-            setlectLineList(openedMethodId)
-            loadCodeInEditor(code);
-        }
-        window.methodsObjectSaved = window.methodsObject;
-        if(safe) {
-            Log("SAFE OPEN: "+file);
-        } else {
-            Log("OPEN: "+file);
-        }
-    });
+    Compile(safe);
+    if(typeof openedMethodId !== 'undefined') {
+        let code = methodsObject.methodList[openedMethodId].body;
+        setlectLineList(openedMethodId)
+        loadCodeInEditor(code);
+    }
+    window.methodsObjectSaved = window.methodsObject;
+    if(safe) {
+        Log("Safe Open");
+    } else {
+        Log("Force Open");
+    }
 }
 
 function scriptLibRefreshFromFile() {
@@ -645,7 +606,7 @@ function generateTestLink () {
         if(methodsObject.methodList[res].testMode) {
             Swal.fire({
                 title: 'Test Link Generated!',
-                text: "https://www.mediamarkt.com.tr/?SCRIPT_LIB_TEST_UUID=" + methodsObject.methodList[res].testMode.uuid,
+                text: "https://www.mediamarkt.com.tr/?SCRIPT_LIB_TEST_UUID=" + methodsObject.methodList[res].testMode,
                 icon: 'success',
                 confirmButtonText: 'OK'
             })
