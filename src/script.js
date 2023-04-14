@@ -141,10 +141,10 @@ function Compile(safe) {
     fileList.forEach(( filePath ) => {
         let funcCode = fs.readFileSync(sourceDir+filePath, 'utf-8');
         // remove parse function from code:------------------------------
+        const decryptedFilename = decodeBase64(filePath);
         const reg = /[^\t*]\b(?!function\b).*?\b\s*\w*\s*\(\w*\)\s*\{/gm
-        debugger
         const file = {
-            name: filePath,
+            name: decryptedFilename,
             body: funcCode
         }
         tempMeth = extractClassMethod(file,reg)
@@ -263,7 +263,6 @@ async function createOutputFile() { // onSave
     let filePart1 = await fs.readFileSync("static1.js");
     let filePart2 = "class " + settings.class + " { \n\r";
     let filePart3 = /*"\r\n\r\n\r\n" +*/ await fs.readFileSync("static2.js");
-    debugger
     emptyDir(settings.gitPath+"src\\");
     methodsObject.methodList.forEach((element, count) => {
         filePart2 += element.isAsync ? "async " : "" ;
@@ -272,8 +271,9 @@ async function createOutputFile() { // onSave
 	element.body = removeExtraWhiteSpaceFromFunctionBody(element.body, ['\n', '\r']);
         if(element.body[0]!=='\n' || element.body[0]!=='\r') filePart2+='\n';
         filePart2 += element.body;
-        const fileName = `${settings.gitPath}src\\${count},${element.isAsync ? "async" : "null"},${element.name},${element.testMode=="" ? "null" : element.testMode}.js`;
-        fs.writeFileSync(fileName,element.body);
+        const fileName = `${count},${element.isAsync ? "async" : "null"},${element.name},${element.testMode=="" ? "null" : element.testMode}.js`;
+        const filePath = `${settings.gitPath}src\\${encodeBase64(fileName)}`;
+        fs.writeFileSync(filePath,element.body);
         if(element.body[element.body.length-1]!=='\n' || element.body[element.body.length-1]!=='\r') filePart2+='\n';
         filePart2 += `
 this.methodsEndedExecutionCount++;
@@ -463,7 +463,8 @@ function createMethod() {
                 methodsObject.methodList.push(newMethod);
                 const count = methodsObject.methodList.length;
                 const fileName = `${settings.gitPath}src\\${count},null,${newMethod.name},${newUUID}.js`;
-                fs.writeFileSync(fileName,"");
+                const filePath = `${settings.gitPath}src\\${encodeBase64(fileName)}`;
+                fs.writeFileSync(filePath,"");
                 addItemToFictionList(result.value);
             }
         }
