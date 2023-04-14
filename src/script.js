@@ -8,7 +8,7 @@ const { serverGetFunc, Log } = require('../server');
 const { GIT_Status, GIT_Add, GIT_Commit, GIT_Push, GIT_Pull, GIT_ListCommits } = require('./git_operations');
 const { ipcRenderer } = require('electron');
 const { generateCommitLogComponent, updateLogParams, CheckGitUser,
-        encodeBase64, decodeBase64, emptyDir  
+        encodeBase64, decodeBase64, emptyDir, sortList
       } = require('./helpers');
 
 
@@ -105,7 +105,7 @@ function extractClassMethod(file,match) {
     const isAsync = fileName.split(',')[1]=="async"?true:false;
     const tst = fileName.split(',')[3]=="null"?false:fileName.split(',')[3];
     const method = {
-        id: methodId,
+        id: rank,
         name: methodName,
         body: file.body,
         isAsync: isAsync,
@@ -162,6 +162,7 @@ function Compile(safe) {
         }
         addFictionList(tempMeth)
     })
+    sortList()
     window.methodsObject.methodList = methodList;
 }
 
@@ -264,14 +265,14 @@ async function createOutputFile() { // onSave
     let filePart2 = "class " + settings.class + " { \n\r";
     let filePart3 = /*"\r\n\r\n\r\n" +*/ await fs.readFileSync("static2.js");
     emptyDir(settings.gitPath+"src\\");
-    methodsObject.methodList.forEach((element, count) => {
+    methodsObject.methodList.forEach((element) => {
         filePart2 += element.isAsync ? "async " : "" ;
         filePart2 += element.name + "(" + (element.event?element.event:"") + ") {";
         filePart2 += element.testMode ? `if (!scriptLib.runThisFunctionOnlyInTestMode("${element.testMode}")) return;` :  "";
 	element.body = removeExtraWhiteSpaceFromFunctionBody(element.body, ['\n', '\r']);
         if(element.body[0]!=='\n' || element.body[0]!=='\r') filePart2+='\n';
         filePart2 += element.body;
-        const fileName = `${count},${element.isAsync ? "async" : "null"},${element.name},${element.testMode=="" ? "null" : element.testMode}.js`;
+        const fileName = `${element.id},${element.isAsync ? "async" : "null"},${element.name},${element.testMode=="" ? "null" : element.testMode}.js`;
         const filePath = `${settings.gitPath}src\\${encodeBase64(fileName)}`;
         fs.writeFileSync(filePath,element.body);
         if(element.body[element.body.length-1]!=='\n' || element.body[element.body.length-1]!=='\r') filePart2+='\n';
@@ -675,11 +676,12 @@ async function gitCommitCode() {
     // ######################################################################
     // #                          Updating Version                          #
     // ######################################################################
+    const shift = 2; // second version
     let newVersion = await gitLogCommits();
     newVersion = newVersion.length + 1;
     let minorVersion = newVersion % 10;
     let middleVersion = parseInt(newVersion/10)%100
-    let majorVersion = parseInt(newVersion/1000)
+    let majorVersion = parseInt(newVersion/1000) + shift
     let stringVersion = `${majorVersion}.${middleVersion}.${minorVersion}`;
     let fileContent = `window.scriptLib_version = "${stringVersion}";`
     // settings.gitPath
