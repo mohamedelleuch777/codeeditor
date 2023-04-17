@@ -8,7 +8,7 @@ const { serverGetFunc, Log } = require('../server');
 const { GIT_Status, GIT_Add, GIT_Commit, GIT_Push, GIT_Pull, GIT_ListCommits } = require('./git_operations');
 const { ipcRenderer } = require('electron');
 const { generateCommitLogComponent, updateLogParams, CheckGitUser,
-        encodeBase64, decodeBase64, emptyDir, sortList
+        encodeBase64, decodeBase64, emptyDir, sortList, isJS_CodeSafeToSave, minifyJs
       } = require('./helpers');
 
 
@@ -138,7 +138,14 @@ function Compile(safe) {
     const sourceDir = settings.gitPath+"src\\";
     let fileList = fs.readdirSync(sourceDir);
     methodList = [];
-    fileList.forEach(( filePath ) => {
+    // fileList.forEach(( filePath ) => )
+    fileList = fileList.sort((a, b) => {
+        const aNum = parseInt(a.split(',')[0]);
+        const bNum = parseInt(b.split(',')[0]);
+        return aNum - bNum;
+    });
+    for(let i=0; i<fileList.length; i++) {
+        let filePath = fileList[i];
         let funcCode = fs.readFileSync(sourceDir+filePath, 'utf-8');
         // remove parse function from code:------------------------------
         const decryptedFilename = decodeBase64(filePath);
@@ -161,7 +168,7 @@ function Compile(safe) {
             }
         }
         addFictionList(tempMeth)
-    })
+    }
     //sortList()
     window.methodsObject.methodList = methodList;
 }
@@ -259,11 +266,30 @@ function removeExtraWhiteSpaceFromFunctionBody(source, whiteSpaceChar) {
 	return  res_opposite;
 }
 
-async function createOutputFile() { // onSave
+const checkAllScriptsForError = () => {
+    for(let i=0; i<methodsObject.methodList.length; i++) {
+        let method = methodsObject.methodList[i];
+        // let minifiedCode = minifyJs(method.body);
+        let result = isJS_CodeSafeToSave(method.body,method.isAsync);
+        if(result.success===false) {
+            Swal.fire({
+                title: 'Error! Cannot Save!!!',
+                html: "<h2>Error in '" + method.name + "':</h2><pre>" + result.message + "</pre>",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            })
+            return false;
+        }
+    };
+    return true;
+}
+
+async function createOutputFile(encoded=false) { // onSave
     var fs      = require('fs');
     let filePart1 = await fs.readFileSync("static1.js");
     let filePart2 = "class " + settings.class + " { \n\r";
     let filePart3 = /*"\r\n\r\n\r\n" +*/ await fs.readFileSync("static2.js");
+    if(!checkAllScriptsForError()) return;
     emptyDir(settings.gitPath+"src\\");
     methodsObject.methodList.forEach((element) => {
         filePart2 += element.isAsync ? "async " : "" ;
@@ -272,8 +298,11 @@ async function createOutputFile() { // onSave
 	element.body = removeExtraWhiteSpaceFromFunctionBody(element.body, ['\n', '\r']);
         if(element.body[0]!=='\n' || element.body[0]!=='\r') filePart2+='\n';
         filePart2 += element.body;
-        const fileName = `${element.id},${element.isAsync ? "async" : "null"},${element.name},${element.testMode=="" ? "null" : element.testMode}.js`;
-        const filePath = `${settings.gitPath}src\\${encodeBase64(fileName)}`;
+        let fileName = `${element.id},${element.isAsync ? "async" : "null"},${element.name},${element.testMode=="" ? "null" : element.testMode}.js`;
+        if(encoded) {
+            fileName = encodeBase64(fileName);
+        }
+        const filePath = `${settings.gitPath}src\\${fileName}`;
         fs.writeFileSync(filePath,element.body);
         if(element.body[element.body.length-1]!=='\n' || element.body[element.body.length-1]!=='\r') filePart2+='\n';
         filePart2 += `

@@ -196,6 +196,41 @@ function sortList() {
   }
 }
 
+const isJS_CodeSafeToSave = (code, asyncFunc, functionName) => {
+  let newCode = `
+  ${asyncFunc?"async ":""}function ${functionName}(){
+    ${code}
+  }`;
+  try {
+    new Function(newCode);
+    return {succes:true}; // no syntax errors
+  } catch (e) {
+    return {
+      success: false,
+      message: e
+    }; // syntax error found
+  }
+}
+
+function minifyJs(source) {
+  // Remove single-line comments
+  source = source.replace(/\/\/.*$/gm, '');
+
+  // Remove multi-line comments
+  source = source.replace(/\/\*[\s\S]*?\*\//gm, '');
+
+  // Remove extra whitespace
+  source = source.replace(/\s+/g, ' ');
+
+  // Remove semicolons before closing braces
+  source = source.replace(/;\s*}/gm, '}');
+
+  // Remove semicolons at the end of the source
+  source = source.replace(/;\s*$/gm, '');
+
+  return source;
+}
+
 module.exports = {
   writeSetting,
   readSetting,
@@ -205,5 +240,7 @@ module.exports = {
   encodeBase64,
   decodeBase64,
   emptyDir,
-  sortList
+  sortList,
+  isJS_CodeSafeToSave,
+  minifyJs
 }
