@@ -76,10 +76,7 @@ this.methodsEndedExecutionCount++;
 function ended
 ######################################################################################################################################
 */
-testModeFunction() {if (!scriptLib.runThisFunctionOnlyInTestMode(
-                "610a1d9e-6052-4822-ad93-e0e65dbcdd7a"
-            ))
-            return;
+testModeFunction() {if (!scriptLib.runThisFunctionOnlyInTestMode("610a1d9e-6052-4822-ad93-e0e65dbcdd7a")) return;
         // 610a1d9e-6052-4822-ad93-e0e65dbcdd7a ====> this is the UUID of this test function
         /**
          * IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!          DONT DELETE THIS FUNCTION CUZ ITS USED IN THE CONSTRUCTOR
@@ -628,10 +625,7 @@ this.methodsEndedExecutionCount++;
 function ended
 ######################################################################################################################################
 */
-async swogoForCategoryAndSearchPages() {if (!scriptLib.runThisFunctionOnlyInTestMode(
-                "9b6bed7b-2cb9-470b-a41c-9b954a2e7db7"
-            ))
-            return;
+async swogoForCategoryAndSearchPages() {if (!scriptLib.runThisFunctionOnlyInTestMode("9b6bed7b-2cb9-470b-a41c-9b954a2e7db7")) return;
 // https://www.mediamarkt.com.tr/?SCRIPT_LIB_TEST_UUID=9b6bed7b-2cb9-470b-a41c-9b954a2e7db7
 let currentPage = scriptLib.isCategoryPage || scriptLib.isSearchPage;
 if (!currentPage) return; // exits if the current page is different than category or search pages
