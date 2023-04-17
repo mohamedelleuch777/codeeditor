@@ -151,10 +151,31 @@ function CheckGitUser() {
   });
 }
 
+const encodeBase64 = (data) => {
+  return Buffer.from(data).toString('base64');
+}
+
+const decodeBase64 = (data) => {
+  return Buffer.from(data, 'base64').toString('ascii');
+}
+
+function exportFictionsToNewCodeEditorVersionFormat(tempMeth,encodeFileName=false) {
+  console.log(tempMeth)
+  let fileName = `${tempMeth.id},${tempMeth.isAsync?"async":"null"},${tempMeth.name},${tempMeth.testMode?tempMeth.testMode.uuid:"null"}.js`;
+  const fileContent = tempMeth.body;
+  if(encodeFileName) {
+    fileName = encodeBase64(fileName);
+  }
+  fs.writeFileSync(settings.gitPath+"src\\"+fileName,fileContent);
+}
+
 module.exports = {
   writeSetting,
   readSetting,
   generateCommitLogComponent,
   updateLogParams,
-  CheckGitUser
+  CheckGitUser,
+  exportFictionsToNewCodeEditorVersionFormat,
+  encodeBase64,
+  decodeBase64
 }

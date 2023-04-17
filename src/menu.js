@@ -127,6 +127,13 @@ const template = [
       ]
     },
     {
+      label: "Export",
+      submenu: [
+        { label: "Export to new format text", click: (e) => handleMenuActions(e) },
+        { label: "Export to new format base64", click: (e) => handleMenuActions(e) }
+      ]
+    },
+    {
       label: 'Window',
       submenu: [
         { role: 'minimize' },
@@ -237,6 +244,12 @@ function handleMenuActions(evt) {
       break;
       case "One dark theme":
         mainWindow.webContents.send('theme3');
+      break;
+      case "Export to new format text":
+        mainWindow.webContents.send('export');
+      break;
+      case "Export to new format base64":
+        mainWindow.webContents.send('export64');
       break;
   }
 }

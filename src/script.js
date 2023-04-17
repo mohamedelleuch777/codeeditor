@@ -7,7 +7,7 @@ let settings = JSON.parse(data);
 const { serverGetFunc, Log } = require('../server');
 const { GIT_Status, GIT_Add, GIT_Commit, GIT_Push, GIT_Pull, GIT_ListCommits } = require('./git_operations');
 const { ipcRenderer } = require('electron');
-const { generateCommitLogComponent, updateLogParams, CheckGitUser } = require('./helpers');
+const { generateCommitLogComponent, updateLogParams, CheckGitUser, exportFictionsToNewCodeEditorVersionFormat } = require('./helpers');
 
 
 TEST_MODE_COLOR                 = settings.testModeColor;
@@ -896,6 +896,12 @@ const deploy = () => {
     exec(settings.deployer)
 }
 
+const export2NewFormat = (encoded=false) => {
+    window.methodList.forEach( method => {
+        exportFictionsToNewCodeEditorVersionFormat(method,encoded)
+    });
+}
+
 
 ipcRenderer.on('save', (evt, msg) => createOutputFile());
 ipcRenderer.on('refresh', (evt, msg) => scriptLibRefreshFromFile());
@@ -918,5 +924,7 @@ ipcRenderer.on('theme0', (evt, msg) => {createEditor();scriptLibRefreshFromFile(
 ipcRenderer.on('theme1', (evt, msg) => {createEditor(oneDark);scriptLibRefreshFromFile();writeSetting('theme','theme1')});
 ipcRenderer.on('theme2', (evt, msg) => {createEditor(oneDarkHighlightStyle);scriptLibRefreshFromFile();writeSetting('theme','theme2')});
 ipcRenderer.on('theme3', (evt, msg) => {createEditor(oneDarkTheme);scriptLibRefreshFromFile();writeSetting('theme','theme3')});
+ipcRenderer.on('export', (evt, msg) => export2NewFormat());
+ipcRenderer.on('export64', (evt, msg) => export2NewFormat(true));
 
 
