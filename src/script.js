@@ -736,7 +736,7 @@ async function gitCommitCode() {
         Log("Cannot commit without a message");
         return;
     }
-    popupAutoClose("Commiting & Pushing The Code with GIT");
+    popupAutoClose("Commiting The Code with GIT");
     let re = await GIT_Commit(result.value);
     const regex = /\d* file[s]? changed, \d* insertion[s]?\(\+\), \d* deletion[s]?\(-\)/gm;
     if(!regex.exec(re.message)){
@@ -762,9 +762,11 @@ async function gitCommitCode() {
 }
 
 async function gitPushCode() {
+    popupAutoClose("Pushing The Code with GIT");
     await CheckGitUser()
     re = await GIT_Push();
     Log("Pushed to remote.");
+    popupAutoClose("",1)
 }
 
 const gitPullCode = async () => {

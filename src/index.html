@@ -8,6 +8,8 @@
     <title>ScriptLib Code Editor!</title>
 	<script type="text/javascript" src="lib/sweetalert2.all.min.js"></script>
 	<script type="text/javascript" src="lib/jquery.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="lib/codemirror.js" ></script>
 	<script defer type="text/javascript" src="script.js" ></script>
 	<script defer type="text/javascript" src="terminal.js" ></script>
@@ -107,6 +109,16 @@
 			</ul>
 		</div>
 		<div class="CodeMirror"></div>
+		<div id="right-toolbar" class="">
+			<ul>
+				<li class="tab active">cs</li>
+				<li class="tab">wfer</li>
+				<div>
+					<button class="btn-tab active">Helpers</button>
+					<button class="btn-tab">Versions</button>
+				</div>
+			</ul>
+		</div>
 		<input class="terminal" placeholder="Write a terminal command here" >
 	</div>
 	<div class="dropdown-menu dropdown-menu-sm" id="context-menu">
@@ -128,6 +140,26 @@
 <!--##############################################################################################################################################-->
 <!--##############################################################################################################################################-->
 <!--##############################################################################################################################################-->
+<script>
+	
+	document.querySelector('#right-toolbar').addEventListener("mouseenter", (e) => {
+		document.querySelector('#right-toolbar').classList.remove("hidden")
+	});
+
+	document.querySelector('#right-toolbar').addEventListener("mouseleave", (e) => {
+		document.querySelector('#right-toolbar').classList.add("hidden")
+	});
+
+	$('.btn-tab').click( (e) => {
+		if($(e.currentTarget).hasClass("active"))return;
+		$('.btn-tab').removeClass("active");
+		$('#right-toolbar ul .tab').removeClass('active');
+		$(e.currentTarget).addClass("active")
+		$('#right-toolbar ul .tab').eq($(e.currentTarget).index()).addClass('active');
+	});
+
+
+</script>
 <script>
 
 	function createEditor(theme=[]) {
