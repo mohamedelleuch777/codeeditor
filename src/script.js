@@ -144,7 +144,7 @@ function Compile(safe) {
         const decryptedFilename = decodeBase64(filePath);
         const reg = /[^\t*]\b(?!function\b).*?\b\s*\w*\s*\(\w*\)\s*\{/gm
         const file = {
-            name: decryptedFilename,
+            name: filePath,
             body: funcCode
         }
         tempMeth = extractClassMethod(file,reg)
