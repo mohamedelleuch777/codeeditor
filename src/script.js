@@ -162,7 +162,7 @@ function Compile(safe) {
         }
         addFictionList(tempMeth)
     })
-    sortList()
+    //sortList()
     window.methodsObject.methodList = methodList;
 }
 
