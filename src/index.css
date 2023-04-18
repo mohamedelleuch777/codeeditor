@@ -267,7 +267,8 @@
   flex: 1;
   border-radius: 0 0 10px 10px;
   border: solid 1px #DAE0E7;
-  background: #f9f9f9;
+  background: #d8d8d8;
+  cursor: pointer;
 }
 
 #right-toolbar ul.sticky button.active {
@@ -277,8 +278,23 @@
 }
 
 .helpers-list {
-  line-height: 25 px;
-  height: 25px;
+  line-height: 25px;
+  height: 100%;
+  overflow: scroll;
   cursor: pointer;
+  padding-left: 0;
+}
+
+.helpers-list li {
+  border-bottom: solid 1px #fff;
+  padding: 0 10px;
+  background-color: #f5f5f5;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.helpers-list li:hover {
+  background: #c4daff94;
 }
 

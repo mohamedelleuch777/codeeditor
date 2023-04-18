@@ -34,6 +34,11 @@ function classToObject(sourceCode, className) {
         methods2ObjectList.push(tempMeth);
         //******************************* */
     }
+    $(window).ready( () => {
+        let listUL = $('#right-toolbar .helpers-list');
+        let listLI = methods2ObjectList.map( i => i.name).sort().map( i => `<li class="list-item">${i}</li>`).join('\n');
+        listUL.html(listLI);
+    });
     return methods2ObjectList;
 }
 
