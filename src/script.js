@@ -10,6 +10,7 @@ const { ipcRenderer } = require('electron');
 const { generateCommitLogComponent, updateLogParams, CheckGitUser,
         encodeBase64, decodeBase64, emptyDir, sortList, isJS_CodeSafeToSave, minifyJs
       } = require('./helpers');
+const { classToObject } = require('./class2Object');
 
 
 TEST_MODE_COLOR                 = settings.testModeColor;
@@ -169,6 +170,8 @@ function Compile(safe) {
         }
         addFictionList(tempMeth)
     }
+    let scriptLibOutput = fs.readFileSync(settings.path, 'utf-8');
+    window.helpers = classToObject(scriptLibOutput,"ScriptLib");
     //sortList()
     window.methodsObject.methodList = methodList;
 }
