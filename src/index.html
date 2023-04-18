@@ -100,6 +100,7 @@
       
         //sourceCode = atob(`###_ENCRYPTED_BASE64_DATA_###`);
         let startPosition;// = data.indexOf("class ScriptLibFunctions {");
+		/*
 		function onEditorInput(e) {
 			// debugger
 			if(window.methodsObject) {
@@ -108,6 +109,7 @@
 			window.onEditorInput = onEditorInput;
 
 		}
+		*/
 	</script>
 </head>
 <body>
@@ -176,22 +178,13 @@
 </script>
 <script>
 	var editorSelector = "#editor";
-
+	const set = require('./helpers');
 	function createEditor(theme=[]) {
 		window.editor = CodeMirror(document.querySelector(editorSelector), {
 			mode: {name: "javascript", globalVars: true},
 			lineNumbers: true,
-			theme: readSetting('theme') || "default"
+			theme: set.readSetting('theme') || "default"
 		});
-	}
-	
-	function setTheme() {
-		switch(window.theme) {
-			case "theme0": return [];
-			case "theme1": return oneDark;
-			case "theme2": return oneDarkHighlightStyle;
-			case "theme3": return oneDarkTheme;
-		}
 	}
 
 </script>
@@ -201,7 +194,7 @@
 <script>
 
 	// const { oneDark, oneDarkHighlightStyle, oneDarkTheme } = CM['@codemirror/theme-one-dark'];
-	const { readSetting, writeSetting } = require('./helpers');
+	
 	// generateTheme();
 	// window.theme = readSetting('theme') || "default";
 	// let theme = setTheme();

@@ -84,10 +84,69 @@ const template = [
     {
       label: "Themes",
       submenu: [
-        { label: "Light", click: (e) => handleMenuActions(e) },
-        { label: "One dark", click: (e) => handleMenuActions(e) },
-        { label: "One dark highlight style", click: (e) => handleMenuActions(e) },
-        { label: "One dark theme", click: (e) => handleMenuActions(e) }
+        { label: "3024-day", click: (e) => handleMenuActions(e) },
+        { label: "3024-night", click: (e) => handleMenuActions(e) },
+        { label: "abbott", click: (e) => handleMenuActions(e) },
+        { label: "abcdef", click: (e) => handleMenuActions(e) },
+        { label: "ambiance", click: (e) => handleMenuActions(e) },
+        { label: "ayu-dark", click: (e) => handleMenuActions(e) },
+        { label: "ayu-mirage", click: (e) => handleMenuActions(e) },
+        { label: "base16-dark", click: (e) => handleMenuActions(e) },
+        { label: "bespin", click: (e) => handleMenuActions(e) },
+        { label: "base16-light", click: (e) => handleMenuActions(e) },
+        { label: "blackboard", click: (e) => handleMenuActions(e) },
+        { label: "cobalt", click: (e) => handleMenuActions(e) },
+        { label: "colorforth", click: (e) => handleMenuActions(e) },
+        { label: "dracula", click: (e) => handleMenuActions(e) },
+        { label: "duotone-dark", click: (e) => handleMenuActions(e) },
+        { label: "duotone-light", click: (e) => handleMenuActions(e) },
+        { label: "eclipse", click: (e) => handleMenuActions(e) },
+        { label: "elegant", click: (e) => handleMenuActions(e) },
+        { label: "erlang-dark", click: (e) => handleMenuActions(e) },
+        { label: "gruvbox-dark", click: (e) => handleMenuActions(e) },
+        { label: "hopscotch", click: (e) => handleMenuActions(e) },
+        { label: "icecoder", click: (e) => handleMenuActions(e) },
+        { label: "isotope", click: (e) => handleMenuActions(e) },
+        { label: "juejin", click: (e) => handleMenuActions(e) },
+        { label: "lesser-dark", click: (e) => handleMenuActions(e) },
+        { label: "liquibyte", click: (e) => handleMenuActions(e) },
+        { label: "lucario", click: (e) => handleMenuActions(e) },
+        { label: "material", click: (e) => handleMenuActions(e) },
+        { label: "material-darker", click: (e) => handleMenuActions(e) },
+        { label: "material-palenight", click: (e) => handleMenuActions(e) },
+        { label: "material-ocean", click: (e) => handleMenuActions(e) },
+        { label: "mbo", click: (e) => handleMenuActions(e) },
+        { label: "mdn-like", click: (e) => handleMenuActions(e) },
+        { label: "midnight", click: (e) => handleMenuActions(e) },
+        { label: "monokai", click: (e) => handleMenuActions(e) },
+        { label: "moxer", click: (e) => handleMenuActions(e) },
+        { label: "neat", click: (e) => handleMenuActions(e) },
+        { label: "neo", click: (e) => handleMenuActions(e) },
+        { label: "night", click: (e) => handleMenuActions(e) },
+        { label: "nord", click: (e) => handleMenuActions(e) },
+        { label: "oceanic-next", click: (e) => handleMenuActions(e) },
+        { label: "panda-syntax", click: (e) => handleMenuActions(e) },
+        { label: "paraiso-dark", click: (e) => handleMenuActions(e) },
+        { label: "paraiso-light", click: (e) => handleMenuActions(e) },
+        { label: "pastel-on-dark", click: (e) => handleMenuActions(e) },
+        { label: "railscasts", click: (e) => handleMenuActions(e) },
+        { label: "rubyblue", click: (e) => handleMenuActions(e) },
+        { label: "seti", click: (e) => handleMenuActions(e) },
+        { label: "shadowfox", click: (e) => handleMenuActions(e) },
+        { label: "solarized", click: (e) => handleMenuActions(e) },
+        { label: "the-matrix", click: (e) => handleMenuActions(e) },
+        { label: "tomorrow-night-bright", click: (e) => handleMenuActions(e) },
+        { label: "tomorrow-night-eighties", click: (e) => handleMenuActions(e) },
+        { label: "ttcn", click: (e) => handleMenuActions(e) },
+        { label: "twilight", click: (e) => handleMenuActions(e) },
+        { label: "vibrant-ink", click: (e) => handleMenuActions(e) },
+        { label: "xq-dark", click: (e) => handleMenuActions(e) },
+        { label: "xq-light", click: (e) => handleMenuActions(e) },
+        { label: "yeti", click: (e) => handleMenuActions(e) },
+        { label: "idea", click: (e) => handleMenuActions(e) },
+        { label: "darcula", click: (e) => handleMenuActions(e) },
+        { label: "yonce", click: (e) => handleMenuActions(e) },
+        { label: "zenburn", click: (e) => handleMenuActions(e) }
       ]
     },
     {
@@ -238,6 +297,8 @@ function handleMenuActions(evt) {
       case "One dark theme":
         mainWindow.webContents.send('theme3');
       break;
+      default:
+      mainWindow.webContents.send("theme", evt.label);
   }
 }
 

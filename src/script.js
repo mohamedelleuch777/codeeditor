@@ -8,7 +8,7 @@ const { serverGetFunc, Log } = require('../server');
 const { GIT_Status, GIT_Add, GIT_Commit, GIT_Push, GIT_Pull, GIT_ListCommits } = require('./git_operations');
 const { ipcRenderer } = require('electron');
 const { generateCommitLogComponent, updateLogParams, CheckGitUser,
-        encodeBase64, decodeBase64, emptyDir, sortList, isJS_CodeSafeToSave, minifyJs
+        encodeBase64, decodeBase64, emptyDir, sortList, isJS_CodeSafeToSave, minifyJs, writeSetting
       } = require('./helpers');
 const { classToObject } = require('./class2Object');
 
@@ -897,9 +897,7 @@ const deploy = () => {
 }
 
 const setThemeClick = (th) => {
-    switch(th) {
-        case "theme0": editor.setOption("theme", "material"); break;
-    }
+    editor.setOption("theme", th); writeSetting("theme", th);
 }
 
 
@@ -920,9 +918,8 @@ ipcRenderer.on('git_log', (evt, msg) => gitLogCommits());
 ipcRenderer.on('git_log_update_params', (evt, msg) => gitLogCommitsUpdateSearchParams());
 ipcRenderer.on('about_codeeditor', (evt, msg) => aboutMe());
 ipcRenderer.on('deploy_to_server', (evt, msg) => deploy());
-ipcRenderer.on('default', (evt, msg) => {setThemeClick('default');writeSetting('theme','theme0')});
-ipcRenderer.on('theme1', (evt, msg) => {setThemeClick('theme1');writeSetting('theme','theme1')});
-ipcRenderer.on('theme2', (evt, msg) => {setThemeClick('theme2');writeSetting('theme','theme2')});
-ipcRenderer.on('theme3', (evt, msg) => {setThemeClick('theme3');writeSetting('theme','theme3')});
+ipcRenderer.on('theme', (evt, msg) => {
+    setThemeClick(msg)
+});
 
 
