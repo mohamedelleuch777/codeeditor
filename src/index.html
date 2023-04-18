@@ -181,7 +181,7 @@
 		window.editor = CodeMirror(document.querySelector(editorSelector), {
 			mode: {name: "javascript", globalVars: true},
 			lineNumbers: true,
-			theme: 'dracula'
+			theme: readSetting('theme') || "default"
 		});
 	}
 	
@@ -203,7 +203,7 @@
 	// const { oneDark, oneDarkHighlightStyle, oneDarkTheme } = CM['@codemirror/theme-one-dark'];
 	const { readSetting, writeSetting } = require('./helpers');
 	// generateTheme();
-	// window.theme = readSetting('theme') || "theme0";
+	// window.theme = readSetting('theme') || "default";
 	// let theme = setTheme();
 	createEditor([])
 	

@@ -97,6 +97,20 @@ function getTestModeData(bodyCode) {
     return null;
 }
 
+// ##############################################################################################################
+// ##############################################################################################################
+// ##                                                                                                          ##
+// ##                               UPDATE METHOD CODE FROM EDITOR ON EACH INPUT                               ##
+// ##                                                                                                          ##
+// ##############################################################################################################
+// ##############################################################################################################
+$('#editor').on("input", function() {
+    source = editor.getValue();
+    methodList[openedMethodId].body = source;
+});
+// ##############################################################################################################
+// ##############################################################################################################
+
 function extractClassMethod(file,match) {
     let fileName = file.name.split('.')
     fileName = fileName.slice(0,-1)
@@ -906,7 +920,7 @@ ipcRenderer.on('git_log', (evt, msg) => gitLogCommits());
 ipcRenderer.on('git_log_update_params', (evt, msg) => gitLogCommitsUpdateSearchParams());
 ipcRenderer.on('about_codeeditor', (evt, msg) => aboutMe());
 ipcRenderer.on('deploy_to_server', (evt, msg) => deploy());
-ipcRenderer.on('theme0', (evt, msg) => {setThemeClick('theme0');writeSetting('theme','theme0')});
+ipcRenderer.on('default', (evt, msg) => {setThemeClick('default');writeSetting('theme','theme0')});
 ipcRenderer.on('theme1', (evt, msg) => {setThemeClick('theme1');writeSetting('theme','theme1')});
 ipcRenderer.on('theme2', (evt, msg) => {setThemeClick('theme2');writeSetting('theme','theme2')});
 ipcRenderer.on('theme3', (evt, msg) => {setThemeClick('theme3');writeSetting('theme','theme3')});
