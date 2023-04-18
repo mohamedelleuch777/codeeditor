@@ -606,11 +606,7 @@ function setTestMode() {
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                let newTestMode = {
-                    uuid: newUUID,
-                    value: `if (!scriptLib.runThisFunctionOnlyInTestMode("${newUUID}")) return;`
-                }
-                methodsObject.methodList[res].testMode = newTestMode;
+                methodsObject.methodList[res].testMode = newUUID;
                 setEditorBackgroundColor(TEST_MODE_COLOR);
                 Swal.fire('You are under test mode', '', 'success')
             } else if (result.isDenied) {
