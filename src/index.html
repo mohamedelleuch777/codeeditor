@@ -10,7 +10,16 @@
 	<script type="text/javascript" src="lib/jquery.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-	<script type="text/javascript" src="lib/codemirror.js" ></script>
+	
+
+	<!-- Core CodeMirror CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
+	<!-- CodeMirror JavaScript -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
+	<!-- CodeMirror Mode JavaScript -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/javascript/javascript.min.js"></script>
+
+
 	<script defer type="text/javascript" src="script.js" ></script>
 	<script defer type="text/javascript" src="terminal.js" ></script>
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
@@ -108,7 +117,7 @@
 			<ul id="fiction-list">
 			</ul>
 		</div>
-		<div class="CodeMirror"></div>
+		<div id="editor"></div>
 		<div id="right-toolbar" class="">
 			<ul class="sticky">
 				<li class="tab active">
@@ -166,22 +175,13 @@
 
 </script>
 <script>
+	var editorSelector = "#editor";
 
 	function createEditor(theme=[]) {
-		document.querySelector('.CodeMirror').innerHTML = ''
-		window.editor = new EditorView({
-			doc: window.sourceCode || '',
-			extensions: [
-				EditorView.updateListener.of(onEditorInput),
-				basicSetup, 
-				javascript(), 
-				javascriptLanguage.data.of({
-					autocomplete: jsCompletion,
-				}),
-				theme,
-				keymap.of([indentWithTab])
-			],
-			parent: document.querySelector('.CodeMirror')
+		window.editor = CodeMirror(document.querySelector(editorSelector), {
+			mode: {name: "javascript", globalVars: true},
+			lineNumbers: true,
+			theme: 'dracula'
 		});
 	}
 	
@@ -199,31 +199,18 @@
 
 
 <script>
-	'use strict';
-    const { basicSetup } = CM["codemirror"];
-    const { Extension } = CM["@codemirror/state"];
-    const { EditorView, keymap } = CM["@codemirror/view"];
-    const { indentWithTab } = CM["@codemirror/commands"];
-	const { javascript, javascriptLanguage } = CM["@codemirror/lang-javascript"];
-	const { completeFromList } = CM["@codemirror/autocomplete"];
 
-	let jsCompletion = completeFromList(Object.getOwnPropertyNames(window).map(p => {
-		return {
-			label: p,
-			type: /^[A-Z]/.test(p) ? "class" : typeof window[p] == "function" ? "function" : "variable"
-		};
-	}));
-	const { oneDark, oneDarkHighlightStyle, oneDarkTheme } = CM['@codemirror/theme-one-dark'];
+	// const { oneDark, oneDarkHighlightStyle, oneDarkTheme } = CM['@codemirror/theme-one-dark'];
 	const { readSetting, writeSetting } = require('./helpers');
 	// generateTheme();
-	window.theme = readSetting('theme') || "theme0";
-	let theme = setTheme();
-	createEditor(theme)
+	// window.theme = readSetting('theme') || "theme0";
+	// let theme = setTheme();
+	createEditor([])
 	
 	</script>
 	<script type="text/javascript">
 		
-		document.querySelector('.CodeMirror').onclick = function(e) {
+		document.querySelector(editorSelector).onclick = function(e) {
             document.querySelector("#context-menu").style.display = "none";
             return false; 
         }
@@ -233,7 +220,7 @@
             return false; 
         }
 
-		document.querySelector('.CodeMirror').oncontextmenu = function(e) { 
+		document.querySelector(editorSelector).oncontextmenu = function(e) { 
             var top = e.pageY - 0;
             var left = e.pageX + 5;
             document.querySelector("#context-menu").style.display = "flex";
@@ -249,7 +236,7 @@
 			selectFile();
 		}, 300);
 
-		document.querySelector('.CodeMirror').oninput = () => {
+		document.querySelector(editorSelector).oninput = () => {
 			document.querySelector('.fiction-item.active').classList.add("modified");
 			let id = document.querySelector('.fiction-item.active').getAttribute('fiction-id');
 			window.methodsObject.methodList[id].modified = true;

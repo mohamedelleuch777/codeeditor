@@ -11,7 +11,7 @@
     /* height: calc(90vh - 20px); */
   }
   
- .CodeMirror {
+ #editor {
     position: relative;
     left: 350px;
     width: calc(100% - 350px) !important;
@@ -19,8 +19,9 @@
     display: flex;
   }
   
-  .cm-editor {
+  .CodeMirror {
     width: 100%;
+    height: 100% !important;
   }
   
   #left-side {
@@ -210,6 +211,7 @@
     background-color: azure; */
     animation: show .5s normal forwards;
     overflow: hidden;
+    z-index: 10;
   }
 
   div#right-toolbar.hidden {

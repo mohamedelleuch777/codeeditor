@@ -376,23 +376,11 @@ window.scriptLibFunctions = new ScriptLibFunctions();
 }
 
 function clearEditor() {
-    window.editor.dispatch({
-        changes: {
-            from: 0,
-            to: window.editor.state.doc.length,
-            insert: ''
-        }
-    });
+    window.editor.setValue("");
 }
 
 function setEditorText(txt) {
-    window.editor.dispatch({
-        changes: {
-            from: 0,
-            to: window.editor.state.doc.length,
-            insert: txt
-        }
-    });
+    window.editor.setValue(txt);
 }
 
 async function selectFile(safe=false) {
@@ -882,7 +870,6 @@ const aboutMe = () => {
     });
 }
 
-
 const collectModifiedBlocks = () => {
     let items = document.getElementsByClassName('fiction-item');
     for(let i=0; i<items.length; i++) {
@@ -893,6 +880,12 @@ const collectModifiedBlocks = () => {
 const deploy = () => {
     const { exec } = require("child_process")
     exec(settings.deployer)
+}
+
+const setThemeClick = (th) => {
+    switch(th) {
+        case "theme0": editor.setOption("theme", "material"); break;
+    }
 }
 
 
@@ -913,9 +906,9 @@ ipcRenderer.on('git_log', (evt, msg) => gitLogCommits());
 ipcRenderer.on('git_log_update_params', (evt, msg) => gitLogCommitsUpdateSearchParams());
 ipcRenderer.on('about_codeeditor', (evt, msg) => aboutMe());
 ipcRenderer.on('deploy_to_server', (evt, msg) => deploy());
-ipcRenderer.on('theme0', (evt, msg) => {createEditor();scriptLibRefreshFromFile();writeSetting('theme','theme0')});
-ipcRenderer.on('theme1', (evt, msg) => {createEditor(oneDark);scriptLibRefreshFromFile();writeSetting('theme','theme1')});
-ipcRenderer.on('theme2', (evt, msg) => {createEditor(oneDarkHighlightStyle);scriptLibRefreshFromFile();writeSetting('theme','theme2')});
-ipcRenderer.on('theme3', (evt, msg) => {createEditor(oneDarkTheme);scriptLibRefreshFromFile();writeSetting('theme','theme3')});
+ipcRenderer.on('theme0', (evt, msg) => {setThemeClick('theme0');writeSetting('theme','theme0')});
+ipcRenderer.on('theme1', (evt, msg) => {setThemeClick('theme1');writeSetting('theme','theme1')});
+ipcRenderer.on('theme2', (evt, msg) => {setThemeClick('theme2');writeSetting('theme','theme2')});
+ipcRenderer.on('theme3', (evt, msg) => {setThemeClick('theme3');writeSetting('theme','theme3')});
 
 
