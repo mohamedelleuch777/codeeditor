@@ -900,6 +900,10 @@ const setThemeClick = (th) => {
     editor.setOption("theme", th); writeSetting("theme", th);
 }
 
+function insertTextAtCursor(text) {
+    const cursor = window.editor.getCursor();  // get the current cursor position
+    window.editor.replaceRange(text, cursor);  // insert the text at the cursor position
+}
 
 ipcRenderer.on('save', (evt, msg) => createOutputFile());
 ipcRenderer.on('refresh', (evt, msg) => scriptLibRefreshFromFile());

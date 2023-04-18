@@ -35,8 +35,13 @@ function classToObject(sourceCode, className) {
         //******************************* */
     }
     $(window).ready( () => {
+        const helperSelected = (e) => {
+            let txt = e.currentTarget.innerText;
+            insertTextAtCursor("scriptLib."+txt+"(");
+        }
+        window.helperSelected = helperSelected;
         let listUL = $('#right-toolbar .helpers-list');
-        let listLI = methods2ObjectList.map( i => i.name).sort().map( i => `<li class="list-item">${i}</li>`).join('\n');
+        let listLI = methods2ObjectList.map( i => i.name).sort().map( i => `<li class="list-item" onclick="helperSelected(event)">${i}</li>`).join('\n');
         listUL.html(listLI);
     });
     return methods2ObjectList;
