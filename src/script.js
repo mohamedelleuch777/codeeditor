@@ -8,9 +8,10 @@ const { serverGetFunc, Log } = require('../server');
 const { GIT_Status, GIT_Add, GIT_Commit, GIT_Push, GIT_Pull, GIT_ListCommits } = require('./git_operations');
 const { ipcRenderer } = require('electron');
 const { generateCommitLogComponent, updateLogParams, CheckGitUser,
-        encodeBase64, decodeBase64, emptyDir, sortList, isJS_CodeSafeToSave, minifyJs, writeSetting
+        encodeBase64, decodeBase64, emptyDir, sortList, isJS_CodeSafeToSave, minifyJs
       } = require('./helpers');
 const { classToObject } = require('./class2Object');
+
 
 
 TEST_MODE_COLOR                 = settings.testModeColor;

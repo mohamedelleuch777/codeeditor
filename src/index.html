@@ -97,19 +97,12 @@
 	<link rel="stylesheet" href="./theme/zenburn.css">
 
 	<script type="text/javascript">
-      
-        //sourceCode = atob(`###_ENCRYPTED_BASE64_DATA_###`);
-        let startPosition;// = data.indexOf("class ScriptLibFunctions {");
-		/*
-		function onEditorInput(e) {
-			// debugger
-			if(window.methodsObject) {
-			window.openedMethodId && (methodsObject.methodList[openedMethodId].body = editor.state.doc.toString());
-			}
-			window.onEditorInput = onEditorInput;
-
-		}
-		*/
+		let startPosition;
+		if(typeof readSetting==='undefined')
+			var { readSetting } = require('./helpers');
+		if(typeof writeSetting==='undefined')
+			var { writeSetting } = require('./helpers');
+		
 	</script>
 </head>
 <body>
@@ -175,8 +168,8 @@
 </script>
 <script>
 	var editorSelector = "#editor";
-	const set = require('./helpers');
-	function createEditor(theme=[]) {
+	const set = require('./helpers');	
+	function createEditor() {
 		window.editor = CodeMirror(document.querySelector(editorSelector), {
 			mode: {name: "javascript", globalVars: true},
 			lineNumbers: true,
