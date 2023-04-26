@@ -425,6 +425,7 @@ function scriptLibRefreshFromFile() {
     selectFile();
     setTimeout(() => {
         selectFile();
+        drawVersionList();
     }, 300);
 }
 
@@ -432,6 +433,7 @@ function scriptLibSafeReloadFromFile() {
     selectFile(true);
     setTimeout(() => {
         selectFile(true);
+        drawVersionList()
     }, 300);
 }
 
@@ -759,7 +761,8 @@ async function gitCommitCode() {
     } 
     else {
         Log("Commited as: "+result.value);
-        popupAutoClose("",1)
+        popupAutoClose("",1);
+        drawVersionList();
     }
 }
 
@@ -906,6 +909,31 @@ function insertTextAtCursor(text) {
     window.editor.replaceRange(text, cursor);  // insert the text at the cursor position
 }
 
+const drawVersionList = async () => {
+    let listContainer = $('#right-toolbar ul.versions-list');
+    if(!listContainer.length) return; // quite when html list UL container is not ready
+    let commitList = await gitLogCommits();
+    let htmlCode = commitList.map( i => `
+    <li class="list-item" onclick="versionSelected(event)">
+        <span>${i.id}</span>|<span>${i.date}</span>|<span>${i.author}</span>|<span>${i.commit}</span>
+    </li>`).join("");
+    htmlCode = `
+    <div style="width: fit-content; display: flex; flex-direction: column;">
+        ${htmlCode}
+    </div>
+    `;
+    listContainer.html(htmlCode);
+}
+drawVersionList();
+
+const pinnToolBar = (e) => {
+    if(e.offsetX<0) { // clicked on before
+        ;$('#right-toolbar').toggleClass("pinned")
+    }
+}
+$('#right-toolbar').click(pinnToolBar);
+
+
 ipcRenderer.on('save', (evt, msg) => createOutputFile());
 ipcRenderer.on('refresh', (evt, msg) => scriptLibRefreshFromFile());
 ipcRenderer.on('safe_refresh', (evt, msg) => scriptLibSafeReloadFromFile());
@@ -923,8 +951,6 @@ ipcRenderer.on('git_log', (evt, msg) => gitLogCommits());
 ipcRenderer.on('git_log_update_params', (evt, msg) => gitLogCommitsUpdateSearchParams());
 ipcRenderer.on('about_codeeditor', (evt, msg) => aboutMe());
 ipcRenderer.on('deploy_to_server', (evt, msg) => deploy());
-ipcRenderer.on('theme', (evt, msg) => {
-    setThemeClick(msg)
-});
+ipcRenderer.on('theme', (evt, msg) => {setThemeClick(msg)});
 
 
