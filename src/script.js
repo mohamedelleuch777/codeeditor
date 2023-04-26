@@ -105,10 +105,22 @@ function getTestModeData(bodyCode) {
 // ##                                                                                                          ##
 // ##############################################################################################################
 // ##############################################################################################################
-$('#editor').on("input", function() {
+/*
+$('#editor').on("keypress", function() {
     source = editor.getValue();
     methodList[openedMethodId].body = source;
 });
+*/
+editor.on("keydown", function() {
+    source = editor.getValue();
+    methodList[openedMethodId].body = source;
+});
+/*
+$(window).on("keypress", () => {
+    source = editor.getValue();
+    methodList[openedMethodId].body = source;
+})
+*/
 // ##############################################################################################################
 // ##############################################################################################################
 
