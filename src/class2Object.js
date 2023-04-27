@@ -1,22 +1,28 @@
 
 let methodId = 0;
 
-function classToObject(sourceCode, className) {
+
+function getClassSourceCode(sourceCode, className) {
+    
+    methods2Object = {};
+    methodId = 0;
+    methods2Object.name = className;
+    brutFile = sourceCode;
+    var ss = `^\\s*class\\s*${className}\\s*{\\s*`;
+    ss = new RegExp(ss, "gm");
+    let match = ss.exec(sourceCode)
+    let startPosition = match.index;
+    ss = new RegExp("// ###___END_OF_CLASS___###", "gm");
+    match = ss.exec(sourceCode);
+    let endPosition = match.index;
+    methods2Object.startPosition = startPosition;
+    methods2Object.endPosition = endPosition;
+    return sourceCode.substring(startPosition,endPosition+4);
+}
+
+function classToObjectOld(sourceCode, className) {
     try {
-        methods2Object = {};
-        methodId = 0;
-        methods2Object.name = className;
-        brutFile = sourceCode;
-        var ss = `^\\s*class\\s*${className}\\s*{\\s*`;
-        ss = new RegExp(ss, "gm");
-        let match = ss.exec(sourceCode)
-        let startPosition = match.index;
-        ss = new RegExp("// ###___END_OF_CLASS___###", "gm");
-        match = ss.exec(sourceCode);
-        let endPosition = match.index;
-        methods2Object.startPosition = startPosition;
-        methods2Object.endPosition = endPosition;
-        let classCode = sourceCode.substring(startPosition,endPosition+4);
+        let classCode = getClassSourceCode(sourceCode, className)
         var re = /[^\t*]\b(?!function\b).*?\b\s*\w*\s*\(\w*\)\s*\{/gm
         methods2ObjectList = [];
         while ((match = re.exec(classCode)) != null) {
@@ -78,8 +84,78 @@ function class2ObjReadMethod(classCode,match) {
     return method;
 }
 
+// ##########################################################################################################################
+
+function classToObject(sourceCode, className) {
+    // Get the class source code
+    const classSource = getClassSourceCode(sourceCode, className);
+    window.dataLayer = [{ pageType: "Home" }];
+    window.mcs = { user: "" };
+    // Evaluate the class code to define the class and create an instance of it
+    eval(classSource);
+    const objectName = className.charAt(0).toLowerCase() + className.slice(1);
+    const instance = eval(`${objectName}`);
+  
+    // Get the list of method names for the instance
+    const methodNames = Object.getOwnPropertyNames(Object.getPrototypeOf(instance));
+  
+    // Create an array to hold the method objects
+    const methodObjects = [];
+  
+    // Iterate over the method names and create method objects
+    methodNames.forEach((methodName) => {
+      // Get the function body as a string
+      const methodBody = instance[methodName].toString();
+  
+      // Determine if the function is async
+      const isAsync = methodBody.startsWith("async ");
+  
+      // Get the start and end positions of the function body
+      const startPos = methodBody.indexOf("{") + 1;
+      const endPos = methodBody.lastIndexOf("}");
+  
+      // Get the function arguments as an array
+      const argsMatch = methodBody.match(/\((.*?)\)/);
+      const args = argsMatch ? argsMatch[1].split(",").map((arg) => arg.trim()) : [];
+  
+      // Create a method object and add it to the array
+      const method = {
+        id: methodName,
+        args: args,
+        startPosition: startPos,
+        endPosition: endPos,
+        name: methodName,
+        body: methodBody,
+        isAsync: isAsync,
+      };
+      methodObjects.push(method);
+    });
+  
+
+
+
+
+
+    
+    $(window).ready( () => {
+        const helperSelected = (e) => {
+            let txt = e.currentTarget.innerText;
+            insertTextAtCursor("scriptLib."+txt+"(");
+        }
+        window.helperSelected = helperSelected;
+        let listUL = $('#right-toolbar .helpers-list');
+        let listLI = methodObjects.map( i => i.name).sort().map( i => `<li class="list-item" onclick="helperSelected(event)">${i}</li>`).join('\n');
+        listUL.html(listLI);
+    });
+    // Return the array of method objects
+    return methodObjects;
+  }
+  
+
+
 
 module.exports = {
+    classToObjectOld,
     classToObject
 }
   

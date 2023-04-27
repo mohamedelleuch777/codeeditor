@@ -19,6 +19,13 @@
 	<!-- CodeMirror Mode JavaScript -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/javascript/javascript.min.js"></script>
 
+	<script src="https://cdn.jsdelivr.net/npm/codemirror/addon/search/search.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/codemirror/addon/search/searchcursor.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror/addon/search/match-highlighter.js"></script>
+
+
+
+	
 
 	<script defer type="text/javascript" src="script.js" ></script>
 	<script defer type="text/javascript" src="terminal.js" ></script>
@@ -175,6 +182,8 @@
 		window.editor = CodeMirror(document.querySelector(editorSelector), {
 			mode: {name: "javascript", globalVars: true},
 			lineNumbers: true,
+			extraKeys: { "Ctrl-F": "findPersistent", "Ctrl-Space": "autocomplete" },
+  			hintOptions: { completeSingle: false },
 			theme: set.readSetting('theme') || "default"
 		});
 	}
