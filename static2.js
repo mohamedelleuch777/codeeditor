@@ -474,17 +474,35 @@
      ************************************************************************************************************************************
      ************************************************************************************************************************************
      */
-    async getProductTitle() {
+    getProductTitle() {
         if (this.isDesktop) {
-            if (await this.waitUntilFieldCreated('h1[itemprop="name"]')) {
-                return $('h1[itemprop="name"]').text();
-            }
+            this.waitUntilFieldCreated('h1[itemprop="name"]')
+            .then(res => {
+                if (res) {
+                    return $('h1[itemprop="name"]').text();
+                }
+            })
         }
-        if (this.isMobile || this.isApplication) {
-            if (await this.waitUntilFieldCreated(".product-overview-title span")) {
-                return $(".product-overview-title span").text();
-            }
+        if (this.isMobile || this.isApplication) {            
+            this.waitUntilFieldCreated('.product-overview-title span')
+            .then(res => {
+                if (res) {
+                    return $('.product-overview-title span').text();
+                }
+            })
         }
+    }
+
+    /***********************************************************************************************************************************
+     ************************************************************************************************************************************
+     *** Created on Tue Sep 07 2023 @ 15:35
+     *** Developed By Mohamed Elleuch + Yahya Bulca
+     *** Copyright (c) 2023 - MIT
+     ************************************************************************************************************************************
+     ************************************************************************************************************************************
+     */
+    getProductEAN() {
+        return window['product' + scriptLib.getProductSKU()].ean;
     }
 
     /***********************************************************************************************************************************
@@ -1605,10 +1623,10 @@ $(window).ready(() => {
                 // throw "Add To Card button was not found!!!";
             }
             $("#product-details > div.price-sidebar .price-button").after(
-                '<div class="store-delivery button-green-pdp"><a href="#">Mağazadan Teslim Al</a></div>'
+                '<div class="store-delivery"><a href="#" id="storeDelivery">Mağazadan Teslim Al</a></div>'
             );
 
-            $(".store-delivery , .stok-bilgisi").click(function(evt) {
+            $("#storeDelivery, .stok-bilgisi").click(function(evt) {
                 console.info("link clicked");
                 if ($(".stock-mdl").length && false) {
                     // always refresh iframe content
@@ -1871,14 +1889,14 @@ $(window).ready(() => {
     console.info("store delivery mobile started.");
     $(".gridbox.column-1-1.buyback").length &&
         $(".gridbox.column-1-1.buyback").after(
-            '<div class="gridbox column-1-1 store-delivery-mobile"><a href="#">Mağazadan Teslim Al</a></div>'
+            '<div class="gridbox column-1-1 store-delivery-mobile"><a href="#" id="storeDelivery">Mağazadan Teslim Al</a></div>'
         );
     $(".gridbox.column-1-1.buyback").length ||
         $("#add-to-basket-buttons").after(
-            '<div class="gridbox column-1-1 store-delivery-mobile"><a href="#">Mağazadan Teslim Al</a></div>'
+            '<div class="gridbox column-1-1 store-delivery-mobile"><a href="#" id="storeDelivery">Mağazadan Teslim Al</a></div>'
         );
 
-    $(".store-delivery-mobile").click(function() {
+    $("#storeDelivery").click(function() {
         console.info("link clicked");
         //if($('.stock-mdl').length) {
         //    $('.stock-mdl').show();
