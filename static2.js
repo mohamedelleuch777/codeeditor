@@ -48,6 +48,7 @@
         this.isPLP = this.isCategoryPage || this.isSearchPage;
         this.isLoginPage =  window.location.pathname.indexOf("/webapp/wcs/stores/servlet/LogonForm") >= 0 ? true : false;
         this.isCheckoutLoginPage =  window.location.pathname.indexOf("/webapp/wcs/stores/servlet/MultiChannelOrderAuthentication") >= 0 ? true : false;
+        this.isProfile =  window.location.pathname.indexOf("/webapp/wcs/stores/servlet/MultiChannelMAMasterData") >= 0 ? true : false;
         this.userData = mcs.user;
         this.isTestModeActive = false;
         this.keyMap = [];
@@ -474,22 +475,16 @@
      ************************************************************************************************************************************
      ************************************************************************************************************************************
      */
-    getProductTitle() {
+     async getProductTitle() {
         if (this.isDesktop) {
-            this.waitUntilFieldCreated('h1[itemprop="name"]')
-            .then(res => {
-                if (res) {
-                    return $('h1[itemprop="name"]').text();
-                }
-            })
+            if (await this.waitUntilFieldCreated('h1[itemprop="name"]')) {
+                return $('h1[itemprop="name"]').text();
+            }
         }
-        if (this.isMobile || this.isApplication) {            
-            this.waitUntilFieldCreated('.product-overview-title span')
-            .then(res => {
-                if (res) {
-                    return $('.product-overview-title span').text();
-                }
-            })
+        if (this.isMobile || this.isApplication) {
+            if (await this.waitUntilFieldCreated(".product-overview-title span")) {
+                return $(".product-overview-title span").text();
+            }
         }
     }
 
