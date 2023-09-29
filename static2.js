@@ -1464,9 +1464,9 @@
 							change selected store
 		##################################################################
 		*/
-		let storeId = 0;
+		let orderId = 0;
 		try {
-			storeId = serverIncludedData.settings.requestParams.orderId;
+			orderId = serverIncludedData.settings.requestParams.orderId;
 		}
 		catch(e) {
 			orderId = 0;
