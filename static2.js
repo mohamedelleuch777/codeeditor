@@ -1459,16 +1459,22 @@
     ************************************************************************************************************************************
     */
 	async ChangeSelectedMarket(storeId) {
-	/**
-	##################################################################
-						change selected store
-	##################################################################
-	*/
-
+		/**
+		##################################################################
+							change selected store
+		##################################################################
+		*/
+		let storeId = 0;
+		try {
+			storeId = serverIncludedData.settings.requestParams.orderId;
+		}
+		catch(e) {
+			orderId = 0;
+		}
 		const data = {
 			"storeId": "103452",
 			"langId": "-14",
-			"orderId": serverIncludedData.settings.requestParams.orderId,
+			"orderId": orderId,
 			"pickUpStoreId": storeId,
 			"pickUpStopGo": "false",
 			"method": "marketSelected"
