@@ -1418,6 +1418,76 @@
 			setTimeout(resolve, period)
 		})
 	}
+
+
+
+
+    /***********************************************************************************************************************************
+     ************************************************************************************************************************************
+    *** Created on Thu Sep 29 2023 @ 23:33
+    *** Developed By Mohamed Elleuch
+    *** Copyright (c) 2023 - MIT
+    ************************************************************************************************************************************
+    ************************************************************************************************************************************
+    */
+	jsonToPostParams(jsonObj) {
+		const postParams = new URLSearchParams(jsonObj).toString();
+		return postParams;
+	}
+
+	postParamsToJson(postParams) {
+		const jsonObj = {};
+		const keyValuePairs = postParams.split('&');
+		
+		for (const pair of keyValuePairs) {
+			const [key, value] = pair.split('=');
+			jsonObj[key] = value;
+		}
+		
+		return jsonObj;
+	}
+
+
+
+
+    /***********************************************************************************************************************************
+     ************************************************************************************************************************************
+    *** Created on Thu Sep 29 2023 @ 23:32
+    *** Developed By Mohamed Elleuch
+    *** Copyright (c) 2023 - MIT
+    ************************************************************************************************************************************
+    ************************************************************************************************************************************
+    */
+	async ChangeSelectedMarket(storeId) {
+	/**
+	##################################################################
+						change selected store
+	##################################################################
+	*/
+
+		const data = {
+			"storeId": "103452",
+			"langId": "-14",
+			"orderId": serverIncludedData.settings.requestParams.orderId,
+			"pickUpStoreId": storeId,
+			"pickUpStopGo": "false",
+			"method": "marketSelected"
+		}
+
+		const postDataString = this.jsonToPostParams(data)
+
+		let res = await fetch("https://www.mediamarkt.com.tr/webapp/wcs/stores/servlet/MultiChannelOrderSummaryController", {
+		"headers": {
+			"accept": "application/json",
+			"content-type": "application/x-www-form-urlencoded"
+		},
+		"body": postDataString,
+		"method": "POST",
+		"mode": "cors",
+		"credentials": "include"
+		});
+		return (await res.json()).delivery
+	}
 }
 window.scriptLib = new ScriptLib();
 
