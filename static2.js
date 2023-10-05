@@ -1994,6 +1994,7 @@ $(window).ready(() => {
 
     $(".stock-cls-icn").click(function() {
         $(".stock-mdl").hide();
+        $(".stock-mdl").remove();
         $("#cboxOverlay").hide();
     });
 
